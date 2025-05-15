@@ -1,3 +1,13 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+@theme {
+    --color-primary: #10b981;
+}
+
+@layer base {
+   *{
+    user-select: none;
+   }
+}
