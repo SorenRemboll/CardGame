@@ -1,6 +1,7 @@
 <script lang="ts">
     import Card from "$lib/components/Card.svelte";
 	import HealthBar from "$lib/components/HealthBar.svelte";
+    import { BOARD_SIZE } from "$lib/consts/Board.consts";
     import { actionState } from "$lib/state/Actions.state.svelte";
     import { boardState } from "$lib/state/Board.state.svelte";
 	import { enemyPlayerState, playerState } from "$lib/state/Player.state.svelte";
@@ -18,16 +19,16 @@
 			? 'flex-col'
 			: 'flex-col-reverse'} player w-full flex justify-center items-center"
 	>
-		<div class="w-4/5  flex justify-evenly py-10 px-4 gap-4">
+		<div class="w-4/5 flex justify-evenly py-10 px-4 gap-4">
 			{#each isEnemy ? enemyPlayerState.hand : playerState.hand as card, index}
 				<Card {card} {index} {isEnemy}/>
 			{/each}
 		</div>
 
 		<div
-			class="cardSlotContainer w-4/5 h-44 flex justify-evenly py-10 px-4 gap-4"
+			class="cardSlotContainer w-4/6 h-44 flex justify-evenly py-10 px-4 gap-4"
 		>
-			{#each Array(5) as boardSlot,index}
+			{#each Array(BOARD_SIZE) as boardSlot,index}
 				<div
 				bind:this={boardState.boardNodes[index]}
 				onmouseup={() => {
@@ -43,17 +44,13 @@
 				</div>
 			{/each}
 		</div>
-		<div class="">
-		<HealthBar 
-			maxHealth={!isEnemy ? playerState.maxHealth : enemyPlayerState.maxHealth}
-			health={!isEnemy ? playerState.health : enemyPlayerState.health} />
-	</div>
+		
 	</div>
 	
 {/snippet}
 
 
-<div class="board h-dvh w-dvw flex relative justify-center gap-8 flex-col items-center" 
+<div class="board h-screen w-screen flex relative justify-center gap-8 flex-col items-center" 
 	onmouseup={() => {
 		if(actionState.selectedCard && !actionState.isCardClicked) {
 			actionState.stopDrag(null)

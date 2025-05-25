@@ -41,21 +41,11 @@ class ActionState {
 		boardState.setContentOfBoardNode(indexOfBoardSlot, this.selectedCardDomNode);
 		this.isDragging = false;
 		this.isCardClicked = false;
-
 		playCard(this.selectedCard);
-
 		this.selectedCard = null;
 		this.selectedCardDomNode = null;
 		
 	};
-
-  /*   $effect(() => {
-		if (cardData.card) {
-			document.addEventListener("mousemove", moveCard);
-		} else {
-			document.removeEventListener("mousemove", moveCard);
-		}d
-	}); */
 
 
 	moveCard = (e?: MouseEvent) => {        

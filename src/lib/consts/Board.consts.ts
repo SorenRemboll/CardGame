@@ -1,0 +1,1 @@
+export const BOARD_SIZE = 7; // Assuming a fixed board size of 5 for simplicity
