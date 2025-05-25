@@ -5,12 +5,23 @@ export class PlayerState {
     _graveyard:Card[] = [];
     _discard:Card[] = [];
 
+    private _health = $state(0)
+    private _maxHealth = $state(0); 
+
     hand:Card[] = $state([]);
     private _id = 0;
     get name() {
         return this._name;
     }
-    constructor(name: string, id: number) {
+    get health() {
+        return this._health;
+    }
+    get maxHealth() {
+        return this._maxHealth;
+    }
+    constructor(name: string, id: number,health: number = 0) {
+        this._health = health;
+        this._maxHealth = health;
         this._name = name;
         this._id = id;
         // Initialize the deck with some cards
@@ -19,13 +30,15 @@ export class PlayerState {
             name: `Card ${i}`,
             type: "Monster",
             description: "A powerful monster",
+            attack: Math.floor(Math.random() * 100),
+            health: Math.floor(Math.random() * 100),
         }));
     }
 
     get id() {
         return this._id;
     }
-
+  
 
     drawCard(amount: number = 1) {
         for (let i = 0; i < amount; i++) {
@@ -43,8 +56,14 @@ export class PlayerState {
             }
         }
     }
-    
+    takeDamage(amount: number) {
+        this._health -= amount;
+        if (this._health < 0) {
+            this._health = 0;
+            //DEATH 
+        }
+    }
 
 }
-export const playerState = new PlayerState("Player 1", 1);
-export const enemyPlayerState = new PlayerState("Player 2", 2);
+export const playerState = new PlayerState("Player 1", 1,100);
+export const enemyPlayerState = new PlayerState("Player 2", 2,100);
