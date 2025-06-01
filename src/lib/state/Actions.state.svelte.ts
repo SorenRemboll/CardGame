@@ -13,6 +13,7 @@ class ActionState {
     selectedCardDomNode = $state<HTMLElement | null>(null)
     moveCardState = $derived(this.isCardClicked||this.isDragging)
     startDrag = (card: Card, cardDomElement:HTMLElement) => {
+        if(boardState.isCardOnBoard(card))return
 		this.selectedCard = card;
 		this.selectedCardDomNode = cardDomElement;
 	};
@@ -32,7 +33,7 @@ class ActionState {
     
 
     stopDrag = (indexOfBoardSlot:number|null) => {
-		if (!this.selectedCard || !this.selectedCardDomNode) return;
+		if (!this.selectedCard || !this.selectedCardDomNode || ( indexOfBoardSlot && boardState.isCardOnBoard(indexOfBoardSlot))) return;
 		if (indexOfBoardSlot === null) {
 			this.selectedCard = null;
 			this.selectedCardDomNode = null;

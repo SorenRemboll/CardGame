@@ -4,12 +4,13 @@ export class PlayerState {
     _deck:Card[] = [];
     _graveyard:Card[] = [];
     _discard:Card[] = [];
+    hand:Card[] = $state([]);
 
     private _health = $state(0)
     private _maxHealth = $state(0); 
-
-    hand:Card[] = $state([]);
     private _id = 0;
+
+    
     get name() {
         return this._name;
     }
