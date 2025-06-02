@@ -1,17 +1,14 @@
 <script lang="ts">
-    import { playCard } from "$lib/actions/player";
     import Card from "$lib/components/Card.svelte";
 	import HealthBar from "$lib/components/HealthBar.svelte";
     import { actionState } from "$lib/state/Actions.state.svelte";
+    import { attackerState } from "$lib/state/Attacker.state.svelte";
     import { boardState } from "$lib/state/Board.state.svelte";
+    import { defender } from "$lib/state/Defender.state.svelte";
 	import { gameState } from "$lib/state/Game.state.svelte";
-	import { enemyPlayerState, playerState } from "$lib/state/Player.state.svelte";
 	import { onMount } from "svelte";
 
-	onMount(() => {
-		playerState.drawCard(5)
-		enemyPlayerState.drawCard(5);
-	});
+	
 
 	
 </script>
@@ -24,14 +21,14 @@
 	>
 		<div class="w-4/5 flex justify-evenly py-10 px-4 ">
 			<div class="hand flex grow justify-center">
-				{#each isEnemy ? enemyPlayerState.hand : playerState.hand as card, index}
+				{#each isEnemy ? attackerState.hand : defender.hand as card, index}
 					<Card {card} {index} {isEnemy}/>
 				{/each}
 			</div>
 			<div class="playerArea w-1/5 ">
 				<HealthBar 
-				maxHealth={isEnemy ? enemyPlayerState.maxHealth : playerState.maxHealth}
-				health={isEnemy ? enemyPlayerState.health : playerState.health} 
+				maxHealth={isEnemy ? attackerState.maxHealth : defender.maxHealth}
+				health={isEnemy ? attackerState.health : defender.health} 
 			/>
 			</div>
 		</div>

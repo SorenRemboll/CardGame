@@ -10,7 +10,7 @@
         htmlClass?: HTMLElement['classList']
     } = $props();
 </script>
-<div
+<div    
     onmousedown={(e) => {
         if (isEnemy || boardState.isCardOnBoard(card)) return;
         actionState.initialX = e.clientX;
@@ -28,20 +28,20 @@
     }}
     bind:this={boardState.handnodes[index]}
     style:top={actionState.moveCardState && actionState.selectedCard?.id === card.id
-        ? actionState.y - 74 + "px"
+        ? actionState.y - 97 + "px"
         : ""}
     style:left={actionState.moveCardState && actionState.selectedCard?.id === card.id
-        ? actionState.x - 40 + "px"
+        ? actionState.x - 64 + "px"
         : ""}
     data-type="card"
     data-id={card.id}
     class={[htmlClass,
         "border  origin-bottom transition w-32 h-48 shadow-2xl bg-slate-700 flex hover:border-emerald-300 hover:text-emerald-300 box-border justify-between flex-col text-center items-center cursor-pointer py-2",
         {
-            "absolute pointer-events-none z-10 rotate-0 -m-0":
+            "absolute pointer-events-none z-10":
                 actionState.moveCardState && actionState.selectedCard?.id === card.id,
-            "rotate-0 -m-0":boardState.isCardOnBoard(card),
-            "rotate-6 -m-4 z-0 hover:-translate-y-5 hover:z-10 hover:scale-125 hover:rotate-0": !boardState.isCardOnBoard(card),
+            "rotate-0 -m-0":boardState.isCardOnBoard(card) ||  actionState.moveCardState && actionState.selectedCard?.id === card.id,
+            "rotate-6 -m-4 z-0 hover:-translate-y-5 hover:z-10 hover:scale-125 hover:rotate-0": !boardState.isCardOnBoard(card) && !(actionState.moveCardState && actionState.selectedCard?.id === card.id),
             "relative ": !actionState.moveCardState && actionState.selectedCard?.id === card.id,
             "border-primary": !isEnemy,
             "border-red-500": isEnemy,

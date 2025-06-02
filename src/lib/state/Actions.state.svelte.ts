@@ -1,6 +1,5 @@
 import type {Card} from "$lib/types/Game";
 import { boardState } from "./Board.state.svelte";
-import { playCard } from "$lib/actions/player";
 
 class ActionState {
     initialX = $state(0)
@@ -42,7 +41,7 @@ class ActionState {
 		boardState.setContentOfBoardNode(indexOfBoardSlot, this.selectedCardDomNode);
 		this.isDragging = false;
 		this.isCardClicked = false;
-		playCard(this.selectedCard);
+        //PLAY CARD
 		this.selectedCard = null;
 		this.selectedCardDomNode = null;
 		
