@@ -11,7 +11,6 @@ export const load: PageServerLoad = async ({ locals }) => {
         return redirect(307, ROUTES.CHARACTER);
     }
 }
-
 export const actions = {
 	login: async ({ cookies, request,locals}) => {
 		const data = await request.formData();
@@ -40,6 +39,12 @@ export const actions = {
         //success
         locals.user = user;
         cookies.set(COOKIE_NAME, user.sessionID,{path:'/',})
-        return redirect(307,ROUTES.CHARACTER);
+        return {
+            success: true,
+            user: {
+                id: user.id,
+                userName: user.userName,
+            }
+        };
 	}
 } satisfies Actions;

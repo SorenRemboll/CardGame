@@ -4,7 +4,10 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			user: import('@prisma-app/client').User | null;
+			user: {
+				id: number;
+				userName: string;
+			} | null;
 		}
 		// interface PageData {}
 		// interface PageState {}

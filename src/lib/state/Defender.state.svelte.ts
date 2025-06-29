@@ -2,7 +2,7 @@ import {PlayerState} from "$lib/state/Player.state.svelte";
 
 class Defender extends PlayerState {
     constructor(name: string, maxHealth: number, health: number) {
-        super(name, maxHealth, health);
+        super( maxHealth, health);
         this.drawCard(5); // Draw 5 cards at the start
     }
     drawCard(amount: number = 1) {

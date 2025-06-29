@@ -31,7 +31,11 @@ export const handle: Handle = async ({ event, resolve, }) => {
     })
     if(user){
         // If user is found, attach it to the event
-        event.locals.user = user;
+        const safeUserStats = {
+            id: user.id,
+            userName:user.userName
+        }
+        event.locals.user = safeUserStats;
     }
 
     return await resolve(event);

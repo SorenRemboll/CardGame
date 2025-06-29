@@ -1,6 +1,8 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
     import { goto } from '$app/navigation';
+    import { ROUTES } from '$lib/consts/routes';
+    import { user } from '$lib/state/User.state.svelte';
   import type { PageProps } from './$types';
   let error = $state('')
 </script>
@@ -19,9 +21,24 @@
         error = result.error.message
         return
       }
-      if(result.type === "redirect"){
-        goto(result.location);
-        return;
+      if(result.type === "success"){
+        error = '';
+        console.log(result.data);
+        if(!result.data?.user) {
+          error = 'No user data returned from server.';
+          return;
+        }
+        const loggedInUser = result.data.user as { id: number, userName: string};
+        user.id = loggedInUser.id;
+        user.userName = loggedInUser.userName;
+        user.isAuthenticated = true;
+        goto(ROUTES.CHARACTER);
+        /* if(result.data?.user?.id && typeof result.data.user.id === 'number'){
+          user.id = result.data.user.id;
+
+        }
+        user.userName = result.data.user.userName;
+        user.isAuthenticated = true; */
       }
       //location.replace('/overview');
 			// `result` is an `ActionResult` object
