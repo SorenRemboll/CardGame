@@ -1,22 +1,29 @@
 import { DBClient } from '$lib/prisma';
-import { Prisma } from '@prisma-app/client';
-import type { RequestHandler } from './$types';
-import { error, json } from '@sveltejs/kit';
+import { Prisma, type User } from '@prisma-app/client';
+import { error, json, type Actions } from '@sveltejs/kit';
 import bcrypt from "bcrypt";
 
-export const POST:RequestHandler = async({request}) => {
-		const {email,password,username}:{email:string,password:string,username:string} = await request.json();
+export const actions = {
+    signup: async({cookies,request,}) => {
+		const data = await request.formData();
+        const email = data.get('email') as string;
+        const password = data.get('password') as string;
+        const username = data.get('username') as string;
         const saltRounds = 10;
         const passwordHash = await bcrypt.hash(password, saltRounds);
+        const sessionId = await bcrypt.hash(crypto.randomUUID(),2)
+        
         try {
+            
             const user = await DBClient.user.create({
                 data: {
                     email,
                     userName: username,
-                    password:passwordHash
+                    password:passwordHash,
+                    sessionID: sessionId,
                 }
             });
-            return json({ success: true});
+           return { user };
         } catch (e) {
             if (e instanceof Prisma.PrismaClientKnownRequestError) {
                 
@@ -27,5 +34,5 @@ export const POST:RequestHandler = async({request}) => {
 
             }
         } 
-        return json({ })
-	} 
+	}
+}satisfies Actions;

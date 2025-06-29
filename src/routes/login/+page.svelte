@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+    import { goto } from '$app/navigation';
   import type { PageProps } from './$types';
   let error = $state('')
 </script>
@@ -18,9 +19,11 @@
         error = result.error.message
         return
       }
-      console.log(result);
-      
-      location.replace('/');
+      if(result.type === "redirect"){
+        goto(result.location);
+        return;
+      }
+      //location.replace('/overview');
 			// `result` is an `ActionResult` object
 			// `update` is a function which triggers the default logic that would be triggered if this callback wasn't set
 		};
@@ -49,6 +52,7 @@
       <input
         type="password"
         id="password"
+        value="Soer145a!Sbx98hfg"
         name="password"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         required
@@ -56,7 +60,7 @@
     </div>
    
     {#if error}
-      <div class="flex items-start mb-5">
+      <div class="flex items-start mb-5 text-red-500">
         {error}
       </div>
     {/if}

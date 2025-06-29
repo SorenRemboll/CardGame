@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { enhance } from "$app/forms";
+    import { goto } from "$app/navigation";
     import Button from "$lib/components/UI/Button.svelte";
     let emailField = $state('soren.remboll@gmail.com');
     let usernameField = $state('TestUser');
@@ -9,49 +11,55 @@
     const isUsernameValid = $derived(usernameField.length >= 2 && usernameField.length <= 20);
     const isFormValid = $derived(isEmailValid && isPasswordMatch && isUsernameValid);
     let error = $state('');
-    const submitForm = async () => {
-        if (!isFormValid) {
-            return;
-        }
-        console.log('Form submitted with:', {
-            email: emailField,
-            username: usernameField,
-            password: passwordField,
-        });
-        
-        const results = await fetch('/create-user', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email: emailField,
-                username: usernameField,
-                password: passwordField,
-            }),
-        });
-        const data = await results.json();
-        if(!data.success){
-            error = data.message
-            return
-        }
-        alert('Successfull create user!');
-        location.replace('/login')
-
-        
-    };
+    let success:null|Boolean = $state(null);
 </script>
 
 <div class="w-full h-full flex justify-center items-center">
-    <form method="POST" class="w-3/5 mx-auto" onsubmit={(e) => {
-        e.preventDefault();
-        if(!isFormValid) {
+    <form method="POST" class="w-3/5 mx-auto" use:enhance={({ formElement, formData, action, cancel, submitter }) => {
+		// `formElement` is this `<form>` element
+		// `formData` is its `FormData` object that's about to be submitted
+		// `action` is the URL to which the form is posted
+		// calling `cancel()` will prevent the submission
+		// `submitter` is the `HTMLElement` that caused the form to be submitted
+        if(!emailField || !usernameField || !passwordField || !confirmPasswordField){
+            error = "Please fill out all fields.";
+            cancel();
             return;
         }
-        submitForm();
+        if(!isEmailValid){
+            error = "Please enter a valid email address.";
+            cancel();
+            return;
+        }
+        if(!isUsernameValid){
+            error = "Username must be between 2 and 20 characters.";
+            cancel();
+            return;
+        }
+        if(!isPasswordMatch){
+            error = "Passwords do not match.";
+            cancel();
+            return;
+        }
 
 
-    }}>
+        if(isFormValid === false){
+            error = "Please fill out the form correctly.";
+            cancel();
+            return;
+        }
+
+		return async ({ result, update }) => {
+            if(result.type === "error"){
+                error = result.error.message
+                return
+            }
+            if(result.type === "success"){
+                success = true;
+                error = '';
+                return;
+            }}
+	}} action="?/signup"> 
         <div class="mb-5">
             <label
                 for="email"
@@ -119,6 +127,16 @@
                 required
             />
         </div>
+        {#if success === true}
+            <p class="mb-5 text-green-500">
+                User created successfully!
+            </p>
+            <a href="/login">Go to login</a>
+
+           {:else}
         <Button disabled={!isFormValid} />
+
+        {/if}
+       
     </form>
 </div>
