@@ -10,7 +10,7 @@
         user.isAuthenticated = true;
     }
 </script>
-<main>
+<main class="p-4">
     <Header />
     {@render children()}
 </main>

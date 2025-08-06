@@ -1,5 +1,5 @@
 import { DBClient } from '$lib/prisma';
-import { Prisma, type User } from '@prisma-app/client';
+import { Prisma, UserRole, type User } from '@prisma-app/client';
 import { error, json, type Actions } from '@sveltejs/kit';
 import bcrypt from "bcrypt";
 
@@ -12,11 +12,10 @@ export const actions = {
         const saltRounds = 10;
         const passwordHash = await bcrypt.hash(password, saltRounds);
         const sessionId = await bcrypt.hash(crypto.randomUUID(),2)
-        
         try {
-            
             const user = await DBClient.user.create({
                 data: {
+                    role:UserRole.USER,
                     email,
                     userName: username,
                     password:passwordHash,
@@ -35,4 +34,4 @@ export const actions = {
             }
         } 
 	}
-}satisfies Actions;
+} satisfies Actions;

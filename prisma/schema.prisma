@@ -2,15 +2,55 @@ generator client {
   provider = "prisma-client-js"
   output   = "../node_modules/@prisma-app/client"
 }
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id       Int    @id @default(autoincrement()) 
-  userName String @unique
-  email    String @unique
-  password String
-  sessionID String @unique
+  id        Int      @id @default(autoincrement())
+  userName  String   @unique
+  email     String   @unique
+  password  String
+  sessionID String   @unique
+  Deck      Deck[]
+  role      UserRole
+}
+
+model Deck {
+  id             Int            @id @default(autoincrement())
+  name           String
+  userId         Int
+  description    String
+  time_created   DateTime       @default(now())
+  time_updated   DateTime       @updatedAt
+  user           User           @relation(fields: [userId], references: [id])
+  cards          Int[]
+  cardMetaDataId Int?
+}
+
+model CardMetaData {
+  id          Int      @id @default(autoincrement())
+  name        String @unique
+  type        CardType
+  description String
+  siege       Int
+  bastion     Int
+  spirit_cost Int
+  health      Int
+
+  time_created DateTime @default(now())
+  time_updated DateTime @updatedAt
+}
+
+enum CardType {
+  CREATURE
+  SPELL
+  AREA
+}
+
+enum UserRole {
+  USER
+  ADMIN
 }

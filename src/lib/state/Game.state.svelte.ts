@@ -1,11 +1,12 @@
-import { PlayerState } from "./Player.state.svelte";
-
 class GameState{
-    _gameId = 0;
-    constructor(gameId: number) {
-        this._gameId = gameId;
+    private _gameId = 0;
+    get gameId() {
+        return this._gameId;
+    }
+    set gameId(value: number) {
+        if (this._gameId)return;
+        this._gameId = value;
     }
     turnCount = 0;
-    currentPlayersTurn: PlayerState['name'] = "";
 }
-export const gameState = new GameState(1);
+export const gameState = new GameState();

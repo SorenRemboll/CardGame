@@ -1,0 +1,2 @@
+export const DECK_SLOTS_CAP_AMOUNT = 5
+export const DECK_DESCRIPTION_MAX_LENGTH = 50;

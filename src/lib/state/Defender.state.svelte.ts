@@ -1,7 +1,7 @@
 import {PlayerState} from "$lib/state/Player.state.svelte";
 
 class Defender extends PlayerState {
-    constructor(name: string, maxHealth: number, health: number) {
+    /* constructor(name: string, maxHealth: number, health: number) {
         super( maxHealth, health);
         this.drawCard(5); // Draw 5 cards at the start
     }
@@ -20,7 +20,7 @@ class Defender extends PlayerState {
                 }
             }
         }
-    }
+    } */
    
 }
-export const defender = new Defender("Defender",1,100);
+export const defender = new Defender();

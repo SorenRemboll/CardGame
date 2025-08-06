@@ -1,9 +1,27 @@
-import { PlayerState } from "./Player.state.svelte";
+import type{ Card } from "@prisma-app/client";
+export class AttackerState{
+    graveyard:Card[] = [];
+    hand:Card[] = $state([]);
 
-export class AttackerState extends PlayerState{
-    constructor(name: string,id:number, health: number, ) {
-        super(name,id, health);
+    health = $state(0)
+    maxHealth = $state(0); 
+    private _id = 0;
+
+    constructor( id: number, health: number = 0) {
+        this.health = health;
+        this.maxHealth = health;
+        this._id = id;
     }
 
+    get id() {
+        return this._id;
+    }
+    takeDamage(amount: number) {
+        this.health -= amount;
+        if (this.health < 0) {
+            this.health = 0;
+            //DEATH 
+        }
+    }
 }
-export const attackerState = new AttackerState("Attacker", 2, 100);
+export const attackerState = new AttackerState( 2, 100);

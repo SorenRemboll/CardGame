@@ -13,6 +13,7 @@
             </li>
             <li><a href={ROUTES.CHARACTER_OVERVIEW}>Overview</a></li>
             <li><a href={ROUTES.CHARACTER_DECKS}>Decks</a></li>
+            <li><a href={ROUTES.CHARACTER_BATTLES}>Battles</a></li>
             <li><p class="cursor-pointer" onclick={() => {
                 user.logout()
             }}>Logout</p></li>

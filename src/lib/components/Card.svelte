@@ -1,7 +1,8 @@
 <script lang="ts">
     import { actionState } from "$lib/state/Actions.state.svelte";
     import { boardState } from "$lib/state/Board.state.svelte";
-    import type { Card } from "$lib/types/Game";
+
+    import type { Card } from "@prisma-app/client";
     
     let { card, index, isEnemy, htmlClass} : {
         card: Card,
