@@ -1,7 +1,8 @@
-import type { Deck, Card } from '@prisma-app/client';
+import type { Deck, CardMetaData } from '@prisma-app/client';
 export namespace Game {
     export type DeckWithCards = {
-        cards: Card[]
-
-    } & Deck
+        cards: CardMetaData[]
+        description: string
+        name: string
+    }
 }

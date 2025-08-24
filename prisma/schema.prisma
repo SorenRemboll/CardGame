@@ -27,7 +27,6 @@ model Deck {
   time_updated   DateTime       @updatedAt
   user           User           @relation(fields: [userId], references: [id])
   cards          Int[]
-  cardMetaDataId Int?
 }
 
 model CardMetaData {

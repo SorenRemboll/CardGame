@@ -7,15 +7,18 @@ export class Card{
     public siege = 0;
     public bastion = 0;
     public spirit_cost = 0;
+    public id: number = 0;
     constructor({
+        id = 0,
         name = "",
         type = null,
         description = "",
         siege = 0,
         bastion = 0,
         spirit_cost = 0
-    }:{name: string, type: CardType | null, description: string, siege: number, bastion: number, spirit_cost: number}) {
+    }:{id:number,name: string, type: CardType | null, description: string, siege: number, bastion: number, spirit_cost: number}) {
         this.name = name;
+        this.id = id;
         this.type = type;
         this.description = description;
         this.siege = siege;

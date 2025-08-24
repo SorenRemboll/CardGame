@@ -1,4 +1,4 @@
-import type { Card } from "$lib/cards/BaseCard";
+import { Card } from "$lib/cards/BaseCard";
 
 /**
  * @description Fetches cards from the server based on the provided card IDs.
@@ -16,6 +16,10 @@ export const getCards = async (card_ids:number[] = []) : Promise<Card[]> => {
     if (!response.ok) {
         throw new Error("Failed to fetch cards");
     }
-
-    return await response.json();
+    const rawCards = await response.json() as {
+        cards:Card[],
+        success:boolean,
+    };
+    const cards:Card[] = rawCards.cards.map((cardData) => new Card(cardData));
+    return cards;
 }

@@ -1,8 +1,12 @@
-<script>
+<script lang="ts">
+    import type { LayoutProps } from "../$types";
 
-    const {children} = $props();
+	let { children }: LayoutProps = $props();
+   
+    
+
 </script>
 
-<div>
+<div class=" w-full grow flex flex-col overflow-hidden">
     {@render children()}
 </div>

@@ -14,9 +14,22 @@ export const POST:RequestHandler = async ({request,locals}) => {
     try{
         if(card_ids.length === 0){
             // Fetch all cards if no IDs are provided
-            cards = await DBClient.cardMetaData.findMany();
+            cards = await DBClient.cardMetaData.findMany({
+                omit:{
+                    time_created: true,
+                    time_updated: true,
+                },
+                orderBy:{
+                    spirit_cost: 'asc',
+                }
+                
+            });
         }else{
              cards = await DBClient.cardMetaData.findMany({
+                omit:{
+                    time_created: true,
+                    time_updated: true,
+                },
                 where:{
                     id:{
                         in: card_ids,

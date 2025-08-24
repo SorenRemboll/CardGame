@@ -5,6 +5,8 @@
 @theme {
     --color-primary: #10b981;
     --color-enemy: #ff0000;
+    --spacing-card-width:180px;
+    --spacing-card-height: 300px;
 }
 
 @layer base {

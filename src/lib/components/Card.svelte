@@ -2,7 +2,7 @@
     import { actionState } from "$lib/state/Actions.state.svelte";
     import { boardState } from "$lib/state/Board.state.svelte";
 
-    import type { Card } from "@prisma-app/client";
+    import type { CardMetaData } from "@prisma-app/client";
     
     let { card, index, isEnemy, htmlClass} : {
         card: Card,
