@@ -3,7 +3,6 @@
     import { goto } from '$app/navigation';
     import { ROUTES } from '$lib/consts/routes';
     import { user } from '$lib/state/User.state.svelte';
-  import type { PageProps } from './$types';
   let error = $state('')
 </script>
 
@@ -16,14 +15,12 @@
 		// `submitter` is the `HTMLElement` that caused the form to be submitted
 
 		return async ({ result, update }) => {
-      console.log(result);
       if(result.type === "error"){
         error = result.error.message
         return
       }
       if(result.type === "success"){
         error = '';
-        console.log(result.data);
         if(!result.data?.user) {
           error = 'No user data returned from server.';
           return;

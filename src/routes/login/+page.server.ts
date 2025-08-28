@@ -6,8 +6,8 @@ import { Prisma, type User } from '@prisma-app/client';
 import { COOKIE_NAME } from '$env/static/private';
 import { ROUTES } from '$lib/consts/routes';
 
-export const load: PageServerLoad = async ({ locals }) => {
-    if (locals.user) {
+export const load: PageServerLoad = async ({ locals }) => {    
+    if (locals.user) {        
         return redirect(307, ROUTES.CHARACTER);
     }
 }

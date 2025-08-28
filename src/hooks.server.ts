@@ -9,14 +9,15 @@ export const handle: Handle = async ({ event, resolve, }) => {
 	if (event.url.pathname.startsWith('/.well-known/appspecific/com.chrome.devtools')) {return new Response(null, { status: 204 })}
 
     const { cookies } = event;
-    const sessionId = cookies.get(COOKIE_NAME);
+    
+    const sessionId = cookies.get(COOKIE_NAME);    
     if(PROTECTED_ROUTES.some(route => event.url.pathname.startsWith(route))) {
         // If the route is protected and no session ID is found, redirect to the login page
         if (!sessionId) {
             return redirect(307, ROUTES.LOGIN);
         }
     }
-    if (!sessionId) {
+    if (!sessionId) {        
         // If no session ID is found, redirect to the login page
         return await resolve(event);
     }

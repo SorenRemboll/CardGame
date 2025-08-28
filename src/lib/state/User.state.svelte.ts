@@ -23,10 +23,8 @@ class User {
         this._isAuthenticated = value;
     }
     async logout(){
-        console.log(this);
         
         if(!this._isAuthenticated) return
-        console.log('Logging out user with id:', this._id);
         
         const results = await fetch('/api/logout', {
             method: 'POST',

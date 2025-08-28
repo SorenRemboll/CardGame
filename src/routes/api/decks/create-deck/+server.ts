@@ -52,7 +52,6 @@ export const POST:RequestHandler = async ({request,locals}) => {
                 time_updated: true,
             }
         });
-        console.log(deck);
         
         if (!deck) {
             return json({
@@ -65,7 +64,6 @@ export const POST:RequestHandler = async ({request,locals}) => {
             deck,
         });
     }catch (e) {
-        console.log(e);
         
         return error(500, {
             message: "Failed to create deck"

@@ -40,7 +40,6 @@ export const POST:RequestHandler = async ({request,locals}) => {
 
         
     } catch (e) {
-        console.log(e);
         
         return error(500,{
             message: "Failed to fetch cards"
