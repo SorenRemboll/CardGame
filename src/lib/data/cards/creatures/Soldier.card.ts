@@ -1,5 +1,5 @@
 import {CardType} from "@prisma-app/client"
-import { Card } from "../BaseCard";
+import { Card } from "../Card.data.svelte";
 export class Soldier extends Card {
     constructor(){
         super({

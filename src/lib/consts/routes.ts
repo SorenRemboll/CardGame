@@ -7,6 +7,7 @@ export const ROUTES = {
     CHARACTER_OVERVIEW: '/character/overview',
     CHARACTER_DECKS: '/character/decks',
     CHARACTER_BATTLES: '/battles',
+    CHARACTER_DECK:(deck_id: number | 'new-deck'): `/character/decks/${number | 'new-deck'}` => `/character/decks/${deck_id}`,
 } as const
 export const PROTECTED_ROUTES = [
     ROUTES.GAME,

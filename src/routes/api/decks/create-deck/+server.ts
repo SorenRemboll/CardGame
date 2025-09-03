@@ -1,9 +1,10 @@
 import { DECK_SLOTS_CAP_AMOUNT } from "$lib/consts/User.consts";
 import { DBClient } from "$lib/prisma";
 import { error, json, type RequestHandler } from "@sveltejs/kit"
+import type { CardMetaData } from "@prisma-app/client";
 
 export const POST:RequestHandler = async ({request,locals}) => {
-    const {name,description,cards}:{name:string,description:string,cards:number[]} = await request.json();
+    const {name,description,cards}:{name:string,description:string,cards:CardMetaData[]} = await request.json();
     if(!locals.user){
         return json({
             success:false,
@@ -32,7 +33,7 @@ export const POST:RequestHandler = async ({request,locals}) => {
         where:{
             userId: locals.user.id,
         }
-    }) > DECK_SLOTS_CAP_AMOUNT;
+    }) <= DECK_SLOTS_CAP_AMOUNT;
     if(!isUserAllowedToCreateDeck){
         return json({
             success: false,
@@ -44,8 +45,10 @@ export const POST:RequestHandler = async ({request,locals}) => {
             data: {
                 name,
                 description,
-                cards,
                 userId: locals.user.id,
+                cards: {
+                    connect: cards.map(card => ({id: card.id}))
+                }
             },
             omit:{
                 time_created: true,

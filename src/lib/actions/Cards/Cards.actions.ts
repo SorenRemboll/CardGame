@@ -1,4 +1,4 @@
-import { Card } from "$lib/cards/BaseCard";
+import { Card } from "$lib/data/cards/Card.data.svelte";
 
 /**
  * @description Fetches cards from the server based on the provided card IDs.

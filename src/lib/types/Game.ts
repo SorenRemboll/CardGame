@@ -1,7 +1,8 @@
-import type { Deck, CardMetaData } from '@prisma-app/client';
+import type { Card } from '$lib/data/cards/Card.data.svelte';
 export namespace Game {
     export type DeckWithCards = {
-        cards: CardMetaData[]
+        id:number,
+        cards: Card[]
         description: string
         name: string
     }

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Card } from "$lib/cards/BaseCard";
+    import type { Card } from "$lib/data/cards/Card.data.svelte";
     let { card, onclick} : {
         card: Card,
         onclick: () => void,

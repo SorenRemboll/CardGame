@@ -15,23 +15,22 @@ model User {
   password  String
   sessionID String   @unique
   Deck      Deck[]
-  role      UserRole
 }
 
 model Deck {
-  id             Int            @id @default(autoincrement())
-  name           String
-  userId         Int
-  description    String
-  time_created   DateTime       @default(now())
-  time_updated   DateTime       @updatedAt
-  user           User           @relation(fields: [userId], references: [id])
-  cards          Int[]
+  id           Int            @id @default(autoincrement())
+  name         String
+  userId       Int
+  description  String
+  time_created DateTime       @default(now())
+  time_updated DateTime       @updatedAt
+  user         User           @relation(fields: [userId], references: [id])
+  cards        CardMetaData[]
 }
 
 model CardMetaData {
   id          Int      @id @default(autoincrement())
-  name        String @unique
+  name        String   @unique
   type        CardType
   description String
   siege       Int
@@ -41,15 +40,12 @@ model CardMetaData {
 
   time_created DateTime @default(now())
   time_updated DateTime @updatedAt
+  Deck         Deck?    @relation(fields: [deckId], references: [id])
+  deckId       Int?
 }
 
 enum CardType {
   CREATURE
   SPELL
   AREA
-}
-
-enum UserRole {
-  USER
-  ADMIN
 }
