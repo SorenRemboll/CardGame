@@ -1,4 +1,6 @@
 import { DECK_SIZE } from "$lib/consts/User.consts";
+import { playerState } from "$lib/state/Player.state.svelte";
+import type { Game } from "$lib/types/Game";
 import type { Card } from "../cards/Card.data.svelte";
 
 export class Deck {
@@ -27,6 +29,26 @@ export class Deck {
         this.cards = init.cards || [];
     }
     async save() {
-        
+        console.log("Saving deck:", this.cards);
+        const response = await fetch('/api/decks/create-deck', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id:this.id,
+                name: this.name,
+                description: this.description,
+                cards: this.cards.map(c => c.id)
+            })
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            alert("Error saving deck: " + errorData.message);
+            return;
+        }
+        const responseData = await response.json() as { success: boolean; deck: Game.DeckWithCards };
+        alert("Deck saved successfully!");
+        playerState.setDeck(responseData.deck);
     }
 }

@@ -6,7 +6,6 @@
     import { Card } from "$lib/data/cards/Card.data.svelte";
     import { onMount } from "svelte";
     const { data } = $props();
-    
     const newDeck = $state(new Deck({
         id:data.deck?.id || 0,
         name: data.deck?.name || "",
@@ -81,7 +80,7 @@
         <div class="p-2">
             <button class="w-full transition cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick={() => {
                 createDeck();
-            }}>Create Deck</button>
+            }}>{newDeck.id ? 'Update Deck' : 'Create Deck'}</button>
         </div>
     </div>
    
