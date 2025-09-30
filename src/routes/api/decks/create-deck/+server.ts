@@ -87,7 +87,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
                deckId: deck.id
             },
         });
-        console.log(deck,cardsInDeck);
         
         return json({
             success: true,
