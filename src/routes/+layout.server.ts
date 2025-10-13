@@ -1,4 +1,3 @@
-import { importScript } from "$lib/import";
 import { DBClient } from "$lib/prisma";
 import type { LayoutServerLoad } from "./$types";
 
