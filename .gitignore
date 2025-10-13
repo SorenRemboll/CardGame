@@ -24,3 +24,6 @@ vite.config.ts.timestamp-*
 
 # prisma
 generated/
+
+# docker
+mysql_data
