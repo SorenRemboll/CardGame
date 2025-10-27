@@ -1,5 +1,6 @@
 import { goto } from "$app/navigation";
 import { ROUTES } from "$lib/consts/routes";
+import type { GameState } from "@prisma-app/client";
 
 class User {
     private _id: number = $state(0);
@@ -8,6 +9,48 @@ class User {
     
     public userName:string = $state("");
 
+    gameState:GameState = $state("IDLE");
+
+
+    async searchGame(){
+        this.gameState = "SEARCHING";
+        const response = await fetch('/api/user/search-for-game', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+        });
+        if(!response.ok){
+            console.error("Failed to set user state");
+            this.gameState = "IDLE";
+            return;
+        }
+        const results = await response.json();
+        if(results.state){
+            this.gameState = results.state;
+            goto(ROUTES.LOADING)
+        }
+    }
+    async cancelSearch(){
+        this.gameState = "IDLE";
+        const response = await fetch('/api/user/cancel-search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        if(!response.ok){
+            console.error("Failed to set user state");
+            this.gameState = "SEARCHING";
+            return;
+        }
+        const results = await response.json();
+        if(results.state){
+            this.gameState = results.state;
+            goto(ROUTES.HOME);
+        }
+    }
     get id() {
         return this._id;
     }

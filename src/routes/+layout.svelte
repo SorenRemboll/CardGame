@@ -10,6 +10,7 @@
         user.id = data.user.id;
         user.userName = data.user.userName;
         user.isAuthenticated = true;
+        user.gameState = data.user.gameState;
     }
     if(data.decks && data.decks.length > 0){
         playerState.setDecks(data.decks.map((deck) => {
@@ -23,6 +24,8 @@
     }
 </script>
 <main class="flex flex-col h-full w-full overflow-hidden">
-    <Header />
+    {#if user.gameState !== 'SEARCHING'}
+        <Header />
+    {/if}
     {@render children()}
 </main>

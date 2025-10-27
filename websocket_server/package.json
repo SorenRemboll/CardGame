@@ -1,26 +1,20 @@
 {
   "name": "websocket_server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
     "start": "ts-node src/index.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "dependencies": {
+    "@hono/node-server": "^1.19.5",
+    "hono": "^4.10.1"
+  },
   "devDependencies": {
-    "@types/express": "^5.0.3",
-    "@types/node": "^24.7.2",
-    "dotenv": "^17.2.3",
-    "eslint": "^9.37.0",
-    "express": "^5.1.0",
-    "install": "^0.13.0",
-    "nodemon": "^3.1.10",
-    "npm": "^11.6.2",
-    "prettier": "^3.6.2",
+    "@hono/node-ws": "^1.2.0",
+    "@types/node": "^20.11.17",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "tsx": "^4.7.1",
+    "typescript": "^5.8.3"
   }
 }

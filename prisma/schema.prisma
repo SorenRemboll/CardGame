@@ -15,6 +15,15 @@ model User {
   password  String
   sessionID String   @unique
   Deck      Deck[]
+  time_created DateTime @default(now())
+  time_updated DateTime @updatedAt @default(now())
+  GameState GameState @default(IDLE)
+}
+
+enum GameState {
+  IDLE
+  IN_BATTLE
+  SEARCHING
 }
 
 model Deck {

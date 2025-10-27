@@ -134,7 +134,7 @@
             <a href="/login">Go to login</a>
 
            {:else}
-        <Button disabled={!isFormValid} />
+        <Button disabled={!isFormValid}> Create User</Button>
 
         {/if}
        

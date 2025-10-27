@@ -7,6 +7,7 @@ declare global {
 			user: {
 				id: number;
 				userName: string;
+				gameState: import("@prisma-app/client").GameState;
 			} | null;
 		}
 		// interface PageData {}

@@ -1,6 +1,6 @@
 
 services:
-  db:
+  mysql:
     image: mysql:latest
     restart: always
     environment:
@@ -17,14 +17,14 @@ services:
     image: phpmyadmin/phpmyadmin:latest
     restart: always
     depends_on:
-      - db
+      - mysql
     environment:
-      PMA_HOST: db
+      PMA_HOST: mysql
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "8080:80"
 
-  node:
+  websocket:
     image: "node:22"
     user: "node"
     working_dir: /websocket_server
