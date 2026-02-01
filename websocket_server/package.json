@@ -2,7 +2,7 @@
   "name": "websocket_server",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "ts-node watch src/index.ts",
     "build": "tsc",
     "start": "ts-node src/index.ts"
   },

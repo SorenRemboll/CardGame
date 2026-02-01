@@ -1,23 +1,25 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../node_modules/@prisma-app/client"
+  provider   = "prisma-client"
+  output     = "./generated/prisma"
+  engineType = "client"
+  runtime    = "bun"
 }
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  userName  String   @unique
-  email     String   @unique
-  password  String
-  sessionID String   @unique
-  Deck      Deck[]
-  time_created DateTime @default(now())
-  time_updated DateTime @updatedAt @default(now())
-  GameState GameState @default(IDLE)
+  id           Int         @id @default(autoincrement())
+  userName     String      @unique
+  email        String      @unique
+  password     String
+  sessionID    String      @unique
+  Deck         Deck[]
+  time_created DateTime    @default(now())
+  time_updated DateTime    @default(now()) @updatedAt
+  GameState    GameState   @default(IDLE)
+  Characters   Character[]
 }
 
 enum GameState {
@@ -51,6 +53,28 @@ model CardMetaData {
   time_updated DateTime @updatedAt
   Deck         Deck?    @relation(fields: [deckId], references: [id])
   deckId       Int?
+}
+
+model Battle {
+  id           Int         @id @default(autoincrement())
+  players      Character[]
+  current_turn Int
+
+  time_created DateTime @default(now())
+  time_updated DateTime @updatedAt
+}
+
+model Character {
+  id           Int      @id @default(autoincrement())
+  name         String
+  health       Int
+  max_health   Int
+  time_created DateTime @default(now())
+  time_updated DateTime @updatedAt
+  User         User?    @relation(fields: [userId], references: [id])
+  userId       Int?
+  Battle       Battle?  @relation(fields: [battleId], references: [id])
+  battleId     Int?
 }
 
 enum CardType {

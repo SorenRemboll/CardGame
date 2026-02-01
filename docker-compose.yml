@@ -5,9 +5,9 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE_NAME}
+      MYSQL_USER: ${MYSQL_DATABASE_USER}
+      MYSQL_PASSWORD: ${MYSQL_DATABASE_PASSWORD}
     volumes:
       - ./mysql_data:/var/lib/mysql
     ports:
@@ -23,17 +23,3 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "8080:80"
-
-  websocket:
-    image: "node:22"
-    user: "node"
-    working_dir: /websocket_server
-    restart: always
-    volumes:
-      - ./websocket_server:/websocket_server
-    ports: # use if it is necessary to expose the container to the host machine
-     - target: 3000
-       published: 8888
-       protocol: tcp
-       mode: host
-    command: ["npm", "start"]
