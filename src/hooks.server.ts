@@ -1,7 +1,7 @@
 // hooks.server.ts
 import { COOKIE_NAME } from '$env/static/private';
 import { BATTLE_ROUTES, PROTECTED_ROUTES, ROUTES } from '$lib/consts/routes';
-import { DBClient } from '$lib/prisma';
+import { prisma } from '$lib/prisma';
 import { redirect, type Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve, }) => {
@@ -18,7 +18,7 @@ export const handle: Handle = async ({ event, resolve, }) => {
     if (!sessionId) {        
         return await resolve(event);
     }
-    const user = await DBClient.user.findUnique({
+    const user = await prisma.user.findUnique({
         where:{
             sessionID: sessionId,
         }

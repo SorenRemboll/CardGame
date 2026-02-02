@@ -3,16 +3,87 @@
 @plugin '@tailwindcss/typography';
 
 @theme {
-    --color-primary: #10b981;
-    --color-enemy: #ff0000;
-    --spacing-card-width:180px;
+    /* Primary Colors - Neon Green/Teal */
+    --color-primary-50: #ecfdf5;
+    --color-primary-100: #d1fae5;
+    --color-primary-200: #a7f3d0;
+    --color-primary-300: #6ee7b7;
+    --color-primary-400: #34d399;
+    --color-primary-500: #10b981;
+    --color-primary-600: #059669;
+    --color-primary-700: #047857;
+    --color-primary-800: #065f46;
+    --color-primary-900: #064e3b;
+    
+    /* Neon Accent */
+    --color-neon: #00ffcc;
+    --color-neon-glow: #00ffcc80;
+    
+    /* Teal Accent */
+    --color-teal-50: #f0fdfa;
+    --color-teal-100: #ccfbf1;
+    --color-teal-200: #99f6e4;
+    --color-teal-300: #5eead4;
+    --color-teal-400: #2dd4bf;
+    --color-teal-500: #14b8a6;
+    --color-teal-600: #0d9488;
+    --color-teal-700: #0f766e;
+    --color-teal-800: #115e59;
+    --color-teal-900: #134e4a;
+    
+    /* Gray Scale */
+    --color-gray-50: #f9fafb;
+    --color-gray-100: #f3f4f6;
+    --color-gray-200: #e5e7eb;
+    --color-gray-300: #d1d5db;
+    --color-gray-400: #9ca3af;
+    --color-gray-500: #6b7280;
+    --color-gray-600: #4b5563;
+    --color-gray-700: #374151;
+    --color-gray-800: #1f2937;
+    --color-gray-900: #111827;
+    
+    /* Dark Theme */
+    --color-dark-bg: #0a0e1a;
+    --color-dark-surface: #131824;
+    --color-dark-elevated: #1a2033;
+    
+    /* Enemy/Danger */
+    --color-enemy: #ef4444;
+    --color-danger-500: #ef4444;
+    --color-danger-600: #dc2626;
+    
+    /* Card Dimensions */
+    --spacing-card-width: 180px;
     --spacing-card-height: 300px;
 }
 
 @layer base {
-   *{
-    user-select: none;
-   }
+    * {
+        user-select: none;
+    }
+    
+    body {
+        @apply bg-dark-bg text-gray-100;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        @apply bg-dark-surface;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        @apply bg-gray-700 rounded-full;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-gray-600;
+    }
 }
 
 .boardItem::before {

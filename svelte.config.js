@@ -6,13 +6,19 @@ const config = {
 	// Consult https://svelte.dev/docs/kit/integrations
 	// for more information about preprocessors
 	preprocess: vitePreprocess(),
-	compilerOptions:{
-		warningFilter: (warning, ) => {
-			if (warning.code.startsWith('a11y-')) {
-				return true; 
-			}
+
+	onwarn: (warning, handler) => {
+		// Disable all a11y warnings
+		if (warning.code.startsWith('a11y-')) return;
+		handler(warning);
+	},
+
+	compilerOptions: {
+		experimental: {
+			async: true
 		}
 	},
+
 	kit: {
 		// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.
 		// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
@@ -23,11 +29,6 @@ const config = {
 		},
 		experimental: {
 			remoteFunctions: true
-		}
-	},
-	compilerOptions: {
-		experimental: {
-			async: true
 		}
 	}
 };

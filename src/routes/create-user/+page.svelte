@@ -2,141 +2,143 @@
     import { enhance } from "$app/forms";
     import { goto } from "$app/navigation";
     import Button from "$lib/components/UI/Button.svelte";
-    let emailField = $state('soren.remboll@gmail.com');
-    let usernameField = $state('TestUser');
-    let passwordField = $state('Soer145a!Sbx98hfg');
-    let confirmPasswordField = $state('Soer145a!Sbx98hfg');
+    import Input from "$lib/components/UI/Input.svelte";
+    import Panel from "$lib/components/UI/Panel.svelte";
+    
+    let emailField = $state('');
+    let usernameField = $state('');
+    let passwordField = $state('');
+    let confirmPasswordField = $state('');
+    
     const isEmailValid = $derived(/[A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}/igm.test(emailField));
     const isPasswordMatch = $derived(passwordField === confirmPasswordField && passwordField.length >= 8);
     const isUsernameValid = $derived(usernameField.length >= 2 && usernameField.length <= 20);
     const isFormValid = $derived(isEmailValid && isPasswordMatch && isUsernameValid);
+    
     let error = $state('');
-    let success:null|Boolean = $state(null);
+    let success: null | boolean = $state(null);
+    
+    // Field-specific errors for better UX
+    let emailError = $derived(!emailField ? '' : !isEmailValid ? 'Please enter a valid email address' : '');
+    let usernameError = $derived(!usernameField ? '' : !isUsernameValid ? 'Username must be 2-20 characters' : '');
+    let passwordError = $derived(!passwordField ? '' : passwordField.length < 8 ? 'Password must be at least 8 characters' : '');
+    let confirmError = $derived(!confirmPasswordField ? '' : !isPasswordMatch && confirmPasswordField.length >= 8 ? 'Passwords do not match' : '');
 </script>
 
-<div class="w-full h-full flex justify-center items-center">
-    <form method="POST" class="w-3/5 mx-auto" use:enhance={({ formElement, formData, action, cancel, submitter }) => {
-		// `formElement` is this `<form>` element
-		// `formData` is its `FormData` object that's about to be submitted
-		// `action` is the URL to which the form is posted
-		// calling `cancel()` will prevent the submission
-		// `submitter` is the `HTMLElement` that caused the form to be submitted
-        if(!emailField || !usernameField || !passwordField || !confirmPasswordField){
-            error = "Please fill out all fields.";
-            cancel();
-            return;
-        }
-        if(!isEmailValid){
-            error = "Please enter a valid email address.";
-            cancel();
-            return;
-        }
-        if(!isUsernameValid){
-            error = "Username must be between 2 and 20 characters.";
-            cancel();
-            return;
-        }
-        if(!isPasswordMatch){
-            error = "Passwords do not match.";
-            cancel();
-            return;
-        }
-
-
-        if(isFormValid === false){
-            error = "Please fill out the form correctly.";
-            cancel();
-            return;
-        }
-
-		return async ({ result, update }) => {
-            if(result.type === "error"){
-                error = result.error.message
-                return
-            }
-            if(result.type === "success"){
-                success = true;
-                error = '';
-                return;
-            }}
-	}} action="?/signup"> 
-        <div class="mb-5">
-            <label
-                for="email"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Your email</label
-            >
-            <input
-                bind:value={emailField}
-                type="email"
-                id="email"
-                name="email"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="john@smith.com"
-                required
-            />
+<div class="min-h-screen w-full flex justify-center items-center p-4 bg-linear-to-br from-dark-bg via-dark-surface to-dark-bg">
+    <div class="w-full max-w-md">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-2 bg-linear-to-r from-primary-400 to-teal-400 bg-clip-text text-transparent">
+                Create Account
+            </h1>
+            <p class="text-gray-400">Join us and start your adventure</p>
         </div>
-        <div class="mb-5">
-            <label
-                for="username"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Your username</label
-            >
-            <input
-                bind:value={usernameField}
-                type="text"
-                id="username"
-                name="username"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder=""
-                required
-            />
-        </div>
-        {#if error}
-            <p class="mb-5 text-red-500">
-                {error}
-            </p> 
-        {/if}
-        <div class="mb-5">
-            <label
-                for="password"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Your password</label
-            >
-            <input
-                bind:value={passwordField}
-                type="password"
-                id="password"
-                name="password"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                required
-            />
-        </div>
-        <div class="mb-5">
-            <label
-                for="confirm-password"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Confirm password</label
-            >
-            <input
-                bind:value={confirmPasswordField}
-                type="password"
-                id="confirm-password"
-                name="confirm-password"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                required
-            />
-        </div>
-        {#if success === true}
-            <p class="mb-5 text-green-500">
-                User created successfully!
-            </p>
-            <a href="/login">Go to login</a>
+        
+        <Panel variant="elevated" class="backdrop-blur-sm">
+            {#if success === true}
+                <div class="text-center py-8">
+                    <div class="w-16 h-16 bg-primary-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-100 mb-2">Account Created!</h2>
+                    <p class="text-gray-400 mb-6">Your account has been created successfully.</p>
+                    <Button onclick={() => goto('/login')} class="w-full">
+                        Go to Login
+                    </Button>
+                </div>
+            {:else}
+                <form 
+                    method="POST" 
+                    action="?/signup"
+                    use:enhance={({ formElement, formData, action, cancel, submitter }) => {
+                        if(!emailField || !usernameField || !passwordField || !confirmPasswordField){
+                            error = "Please fill out all fields.";
+                            cancel();
+                            return;
+                        }
+                        if(!isFormValid){
+                            error = "Please correct the errors above.";
+                            cancel();
+                            return;
+                        }
 
-           {:else}
-        <Button disabled={!isFormValid}> Create User</Button>
-
-        {/if}
-       
-    </form>
+                        return async ({ result, update }) => {
+                            if(result.type === "error"){
+                                error = result.error.message;
+                                return;
+                            }
+                            if(result.type === "success"){
+                                success = true;
+                                error = '';
+                                return;
+                            }
+                        }
+                    }}
+                >
+                    <Input
+                        type="email"
+                        id="email"
+                        name="email"
+                        label="Email Address"
+                        placeholder="john@smith.com"
+                        required
+                        bind:value={emailField}
+                        error={emailError}
+                    />
+                    
+                    <Input
+                        type="text"
+                        id="username"
+                        name="username"
+                        label="Username"
+                        placeholder="Choose a username"
+                        required
+                        bind:value={usernameField}
+                        error={usernameError}
+                    />
+                    
+                    <Input
+                        type="password"
+                        id="password"
+                        name="password"
+                        label="Password"
+                        placeholder="Create a strong password"
+                        required
+                        bind:value={passwordField}
+                        error={passwordError}
+                    />
+                    
+                    <Input
+                        type="password"
+                        id="confirm-password"
+                        name="confirm-password"
+                        label="Confirm Password"
+                        placeholder="Re-enter your password"
+                        required
+                        bind:value={confirmPasswordField}
+                        error={confirmError}
+                    />
+                    
+                    {#if error}
+                        <div class="mb-5 p-3 rounded-lg bg-danger-500/10 border border-danger-500/50 text-danger-500 text-sm">
+                            {error}
+                        </div>
+                    {/if}
+                    
+                    <Button type="submit" disabled={!isFormValid} class="w-full mb-4">
+                        Create Account
+                    </Button>
+                    
+                    <div class="text-center text-sm text-gray-400">
+                        Already have an account? 
+                        <a href="/login" class="text-primary-400 hover:text-primary-300 font-medium">
+                            Sign in
+                        </a>
+                    </div>
+                </form>
+            {/if}
+        </Panel>
+    </div>
 </div>

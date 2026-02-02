@@ -1,4 +1,4 @@
-import { DBClient } from "$lib/prisma";
+import { prisma } from "$lib/prisma";
 import { GameState } from "@prisma-app/client";
 import { error, json, type RequestHandler } from "@sveltejs/kit"
 
@@ -8,7 +8,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         return error(401, "User not authenticated");
     }
     try {
-        const updatedUser = await DBClient.user.update({
+        const updatedUser = await prisma.user.update({
             where: {
                 id: locals.user.id,
             },
