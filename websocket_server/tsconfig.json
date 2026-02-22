@@ -1,16 +1,22 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "strict": true,
-    "verbatimModuleSyntax": true,
     "skipLibCheck": true,
     "types": [
-      "node"
+      "bun"
     ],
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
+    "baseUrl": ".",
+    "paths": {
+      "$shared/*": [
+        "../src/lib/shared/*"
+      ]
+    },
     "outDir": "./dist"
   },
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

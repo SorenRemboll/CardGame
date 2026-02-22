@@ -1,38 +1,53 @@
-import { hc } from "hono/client";
-import type { WebSocketApp } from "websocket/src";
+import { goto } from "$app/navigation";
+import { ROUTES } from "$lib/consts/routes";
+import { createWSClient } from "$lib/shared/ws-client";
+import { user } from "./User.state.svelte";
 
 class ConnectionState {
-    private gameId: string | null = null;
-    private client = hc<WebSocketApp>("ws://localhost:8888/"); 
-    private ws = this.client.ws.$ws(0);
-    constructor(gameId: string | null = null) {
-        this.gameId = gameId;
-        this.connect();
+    client = createWSClient('ws://localhost:8888/ws');
+    isConnected = $state(false);
+
+    async connect() {
+        if (this.isConnected) return;
+
+        // Set up handlers before connecting
+        this.client.on('connected', () => {
+            console.log('WebSocket connected');
+        });
+
+        this.client.on('searching', () => {
+            console.log('Added to search queue');
+            user.gameState = 'SEARCHING';
+        });
+
+        this.client.on('match_found', (msg) => {
+            console.log('Match found!', msg);
+            user.gameState = 'IN_BATTLE';
+            user.currentGameId = msg.gameId;
+            user.opponentName = msg.opponentName;
+            goto(ROUTES.GAME);
+        });
+
+        this.client.on('error', (msg) => {
+            console.error('Server error:', msg.message);
+        });
+
+        await this.client.connect();
+        this.isConnected = true;
     }
-    connect() {
-        this.ws.addEventListener('open', this.onOpen);
-        this.ws.addEventListener('message', this.onMessage);
-    }
+
     disconnect() {
-        this.ws.removeEventListener('open', this.onOpen);
-        this.ws.removeEventListener('message', this.onMessage); 
-    }
-    onOpen(event:Event) {
-        console.log(event);
-        
-    }
-    onMessage(event:MessageEvent) {
-        console.log(event.data);
-        
-    }
-    sendMessage(message = "", data:any = {}) {
-        const payload = {
-            message,
-            data
-        }
-        this.ws.send(JSON.stringify(payload));
+        this.client.disconnect();
+        this.isConnected = false;
     }
 
+    findGame(sessionId: string, deckId?: number) {
+        this.client.send({ type: 'find_game', sessionId, deckId: deckId ?? 0 });
+    }
 
+    cancelSearch(sessionId: string) {
+        this.client.send({ type: 'cancel_search', sessionId });
+    }
 }
+
 export const connectionState = new ConnectionState();

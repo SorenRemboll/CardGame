@@ -1,4 +1,4 @@
-import type{ Card } from "@prisma-app/client";
+import type { Card } from '$lib/data/cards/Card.data.svelte';
 export class AttackerState{
     graveyard:Card[] = [];
     hand:Card[] = $state([]);

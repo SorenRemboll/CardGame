@@ -3,6 +3,7 @@
     import { playerState } from "$lib/state/Player.state.svelte";
     import Button from "$lib/components/UI/Button.svelte";
     import Panel from "$lib/components/UI/Panel.svelte";
+    import DeckCard from "$lib/components/UI/DeckCard.svelte";
     import { DECK_SLOTS_CAP_AMOUNT } from "$lib/consts/User.consts";
 </script>
 
@@ -19,7 +20,7 @@
                         Manage your card decks • {playerState.decks.length} / {DECK_SLOTS_CAP_AMOUNT} slots used
                     </p>
                 </div>
-                
+
                 {#if !playerState.isAllDecksSlotsTaken}
                     <a href={ROUTES.CHARACTER_DECK('new-deck')}>
                         <Button size="lg">
@@ -31,7 +32,7 @@
                     </a>
                 {/if}
             </div>
-            
+
             {#if playerState.isAllDecksSlotsTaken}
                 <div class="p-4 rounded-lg bg-danger-500/10 border border-danger-500/50 text-danger-400">
                     <p class="flex items-center gap-2">
@@ -55,60 +56,9 @@
         {:else}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {#each playerState.decks as deck}
-                    <a href={ROUTES.CHARACTER_DECK(deck.id)} class="block group">
-                        <Panel variant="elevated" class="h-full transition-all duration-300 hover:border-primary-500 hover:shadow-primary-900/50">
-                            <div class="flex flex-col h-full">
-                                <!-- Deck Header -->
-                                <div class="mb-4">
-                                    <h3 class="text-xl font-bold text-gray-100 mb-2 group-hover:text-primary-400 transition-colors">
-                                        {deck.name}
-                                    </h3>
-                                    <p class="text-sm text-gray-400 line-clamp-2">
-                                        {deck.description || 'No description'}
-                                    </p>
-                                </div>
-                                
-                                <!-- Deck Stats -->
-                                <div class="mt-auto space-y-3">
-                                    <div class="flex items-center justify-between p-3 bg-dark-surface rounded-lg">
-                                        <span class="text-sm text-gray-400">Total Cards</span>
-                                        <span class="text-lg font-bold text-primary-400">{deck.cards.length}</span>
-                                    </div>
-                                    
-                                    <!-- Card Type Breakdown (if needed) -->
-                                    <div class="grid grid-cols-3 gap-2">
-                                        <div class="text-center p-2 bg-dark-surface rounded-lg">
-                                            <div class="text-xs text-gray-500 mb-1">Creatures</div>
-                                            <div class="text-sm font-semibold text-gray-300">
-                                                {deck.cards.filter(c => c.type === 'CREATURE').length}
-                                            </div>
-                                        </div>
-                                        <div class="text-center p-2 bg-dark-surface rounded-lg">
-                                            <div class="text-xs text-gray-500 mb-1">Spells</div>
-                                            <div class="text-sm font-semibold text-gray-300">
-                                                {deck.cards.filter(c => c.type === 'SPELL').length}
-                                            </div>
-                                        </div>
-                                        <div class="text-center p-2 bg-dark-surface rounded-lg">
-                                            <div class="text-xs text-gray-500 mb-1">Areas</div>
-                                            <div class="text-sm font-semibold text-gray-300">
-                                                {deck.cards.filter(c => c.type === 'AREA').length}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Edit Button -->
-                                    <div class="pt-2">
-                                        <div class="w-full py-2 px-4 bg-primary-600/10 border border-primary-600/30 rounded-lg text-center text-primary-400 font-medium group-hover:bg-primary-600 group-hover:text-white transition-all">
-                                            Edit Deck →
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Panel>
-                    </a>
+                    <DeckCard deck={deck} href={ROUTES.CHARACTER_DECK(deck.id)} actionLabel="Edit Deck →" />
                 {/each}
-                
+
                 <!-- Create New Deck Card (if slots available) -->
                 {#if !playerState.isAllDecksSlotsTaken}
                     <a href={ROUTES.CHARACTER_DECK('new-deck')} class="block group">

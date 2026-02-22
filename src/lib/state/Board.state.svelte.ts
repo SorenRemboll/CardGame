@@ -1,5 +1,5 @@
 import { BOARD_SIZE } from "$lib/consts/Board.consts";
-import type { Card } from "$lib/types/Game";
+import type { Card } from '$lib/data/cards/Card.data.svelte';
 
 class BoardState {
     private _handNodes:HTMLElement[]  = $state([]);

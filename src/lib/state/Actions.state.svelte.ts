@@ -1,4 +1,4 @@
-import type {Card} from "$lib/types/Game";
+import type { Card } from '$lib/data/cards/Card.data.svelte';
 import { boardState } from "./Board.state.svelte";
 
 class ActionState {

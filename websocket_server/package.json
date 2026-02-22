@@ -2,19 +2,17 @@
   "name": "websocket_server",
   "type": "module",
   "scripts": {
-    "dev": "ts-node watch src/index.ts",
-    "build": "tsc",
-    "start": "ts-node src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "db:generate": "bunx prisma generate --schema=../prisma/schema.prisma"
   },
   "dependencies": {
-    "@hono/node-server": "^1.19.5",
-    "hono": "^4.10.1"
+    "prisma": "^6.6.0",
+    "@prisma/client": "^6.6.0",
+    "@prisma/adapter-mariadb": "^6.6.0"
   },
   "devDependencies": {
-    "@hono/node-ws": "^1.2.0",
-    "@types/node": "^20.11.17",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.7.1",
+    "@types/bun": "latest",
     "typescript": "^5.8.3"
   }
 }

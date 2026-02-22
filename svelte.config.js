@@ -25,7 +25,8 @@ const config = {
 		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 		adapter: adapter(),
 		alias: {
-			'@DBG': 'prisma/generated/prisma/client.ts'
+			'@DBG': 'prisma/generated/prisma/client.ts',
+			'$shared': 'shared'
 		},
 		experimental: {
 			remoteFunctions: true

@@ -1,9 +1,8 @@
-import type { Card } from "$lib/data/cards/Card.data.svelte";
-import { DECK_SLOTS_CAP_AMOUNT } from "$lib/consts/User.consts";
-import { playerState } from "$lib/state/Player.state.svelte";
-import type { Game } from "$lib/types/Game";
+import type { Deck } from '$lib/data/decks/Deck.data.svelte';
+import { DECK_SLOTS_CAP_AMOUNT } from '$lib/consts/User.consts';
+import { playerState } from '$lib/state/Player.state.svelte';
 
-export const createOrUpdateDeck = async(deck:Game.DeckWithCards,toUpdate = false) => {
+export const createOrUpdateDeck = async (deck: Deck, toUpdate = false) => {
         if (playerState.decks.length >= DECK_SLOTS_CAP_AMOUNT) {
             throw new Error("Deck slots are full");
         }

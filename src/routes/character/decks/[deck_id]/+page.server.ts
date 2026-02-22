@@ -32,7 +32,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         deck: {
             id: deck.id,
             name: deck.name,
-            description: deck.description,
+            description: deck.description ?? '',
             cards
         }
     };

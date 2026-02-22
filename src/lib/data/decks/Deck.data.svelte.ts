@@ -1,9 +1,20 @@
-import { goto } from "$app/navigation";
-import { ROUTES } from "$lib/consts/routes";
-import { DECK_SIZE } from "$lib/consts/User.consts";
-import { playerState } from "$lib/state/Player.state.svelte";
-import type { Game } from "$lib/types/Game";
-import type { Card } from "../cards/Card.data.svelte";
+import { goto } from '$app/navigation';
+import { ROUTES } from '$lib/consts/routes';
+import { DECK_SIZE } from '$lib/consts/User.consts';
+import type { CardDTO, DeckDTO } from '$lib/types';
+import { playerState } from '$lib/state/Player.state.svelte';
+import { saveDeck } from '$lib/remote/decks.remote';
+import { Card } from '../cards/Card.data.svelte';
+
+type SaveDeckResult = {
+	success: boolean;
+	deck: {
+		id: number;
+		name: string;
+		description: string;
+		cards: (CardDTO & { quantity?: number })[];
+	};
+};
 
 export class Deck {
     private _id: number = $state(0);
@@ -39,12 +50,50 @@ export class Deck {
         }
     };
 
-    constructor(init: { id?: number; name?: string; description?: string; cards?: Card[] } = {}) {
-        this._id = init.id || 0;
-        this.name = init.name || "";
-        this.description = init.description || "";
-        this.cards = init.cards || [];
-    }
+	constructor(init: { id?: number; name?: string; description?: string; cards?: Card[] } = {}) {
+		this._id = init.id || 0;
+		this.name = init.name || '';
+		this.description = init.description || '';
+		this.cards = init.cards || [];
+	}
+
+	/** Create Deck from DTO; expands cards by quantity into Card[] */
+	static fromDTO(dto: DeckDTO): Deck {
+		const cards = dto.cards.flatMap((cardDto) =>
+			Array.from({ length: cardDto.quantity }, () => Card.fromDTO(cardDto))
+		);
+		return new Deck({
+			id: dto.id,
+			name: dto.name,
+			description: dto.description,
+			cards
+		});
+	}
+
+	/** Convert to DTO (groups cards by id with quantity) */
+	toDTO(): DeckDTO {
+		const cardCounts = this.cards.reduce(
+			(acc, card) => {
+				acc[card.id] = (acc[card.id] || 0) + 1;
+				return acc;
+			},
+			{} as Record<number, number>
+		);
+		const cards: CardDTO[] = [];
+		const seen = new Set<number>();
+		for (const card of this.cards) {
+			if (!seen.has(card.id)) {
+				seen.add(card.id);
+				cards.push(card.toDTO(cardCounts[card.id] ?? 1) as CardDTO);
+			}
+		}
+		return {
+			id: this._id,
+			name: this.name,
+			description: this.description,
+			cards
+		};
+	}
 
     // Convert cards array to grouped format for API
     private getCardsForApi() {
@@ -61,26 +110,23 @@ export class Deck {
 
     async save() {
         console.log("Saving deck:", this.cards);
-        const response = await fetch('/api/decks/create-deck', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                id: this.id,
+
+        try {
+            const result = await saveDeck({
+                id: this.id || undefined,
                 name: this.name,
                 description: this.description,
                 cards: this.getCardsForApi()
-            })
-        });
-        if (!response.ok) {
-            const errorData = await response.json();
-            alert("Error saving deck: " + errorData.message);
-            return;
+            }) as SaveDeckResult;
+
+			const deckInstance = Deck.fromDTO(result.deck as DeckDTO);
+
+			alert('Deck saved successfully!');
+			playerState.setDeck(deckInstance);
+			goto(ROUTES.CHARACTER_DECK(result.deck.id));
+        } catch (e) {
+            const error = e as Error;
+            alert("Error saving deck: " + error.message);
         }
-        const responseData = await response.json() as { success: boolean; deck: Game.DeckWithCards };
-        alert("Deck saved successfully!");
-        playerState.setDeck(responseData.deck);
-        goto(ROUTES.CHARACTER_DECK(responseData.deck.id));
     }
 }
