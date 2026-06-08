@@ -22,8 +22,8 @@ model User {
   Characters     Character[]
   currentGameId  String?
   currentGame    Game?       @relation("CurrentGame", fields: [currentGameId], references: [id])
-  gamesAsPlayer1 Game[]      @relation("Player1Games")
-  gamesAsPlayer2 Game[]      @relation("Player2Games")
+  gamesAsAttacker Game[]     @relation("AttackerGames")
+  gamesAsDefender Game[]     @relation("DefenderGames")
 }
 
 enum GameState {
@@ -41,8 +41,8 @@ model Deck {
   time_updated   DateTime   @updatedAt
   user           User       @relation(fields: [userId], references: [id])
   deckCards      DeckCard[]
-  gamesAsPlayer1 Game[]     @relation("Player1Deck")
-  gamesAsPlayer2 Game[]     @relation("Player2Deck")
+  gamesAsAttacker Game[]     @relation("AttackerDeck")
+  gamesAsDefender Game[]     @relation("DefenderDeck")
 }
 
 // Join table - links decks to cards with quantity
@@ -76,27 +76,39 @@ model CardData {
 
 model Game {
   id          String      @id @default(uuid())
-  player1Id   Int
-  player2Id   Int?
+  attackerId  Int
+  defenderId  Int?
   winnerId    Int?
   status      MatchStatus @default(WAITING)
   currentTurn Int         @default(1)
 
-  player1DeckId Int?
-  player2DeckId Int?
-  player1       User  @relation("Player1Games", fields: [player1Id], references: [id])
-  player2       User? @relation("Player2Games", fields: [player2Id], references: [id])
-  player1Deck   Deck? @relation("Player1Deck", fields: [player1DeckId], references: [id])
-  player2Deck   Deck? @relation("Player2Deck", fields: [player2DeckId], references: [id])
+  attackerDeckId Int?
+  defenderDeckId Int?
+  attacker       User  @relation("AttackerGames", fields: [attackerId], references: [id])
+  defender       User? @relation("DefenderGames", fields: [defenderId], references: [id])
+  attackerDeck   Deck? @relation("AttackerDeck", fields: [attackerDeckId], references: [id])
+  defenderDeck   Deck? @relation("DefenderDeck", fields: [defenderDeckId], references: [id])
 
-  player1Health    Int @default(20)
-  player2Health    Int @default(20)
-  player1MaxHealth Int @default(20)
-  player2MaxHealth Int @default(20)
+  attackerHealth    Int @default(20)
+  defenderHealth    Int @default(20)
+  attackerMaxHealth Int @default(20)
+  defenderMaxHealth Int @default(20)
 
-  time_created DateTime  @default(now())
-  time_updated DateTime  @updatedAt
-  usersInCurrentGame User[] @relation("CurrentGame")
+  time_created       DateTime  @default(now())
+  time_updated       DateTime  @updatedAt
+  usersInCurrentGame User[]    @relation("CurrentGame")
+  messages           Message[]
+}
+
+model Message {
+  id           Int      @id @default(autoincrement())
+  content      String
+  time_created DateTime @default(now())
+  time_updated DateTime @updatedAt
+  userId       Int
+  gameId       String
+  userName     String
+  game         Game     @relation(fields: [gameId], references: [id])
 }
 
 enum MatchStatus {

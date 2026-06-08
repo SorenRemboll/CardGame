@@ -1,12 +1,22 @@
-class GameState{
-    private _gameId = 0;
-    get gameId() {
-        return this._gameId;
+import type { Message } from "@DBG";
+import { connectionState } from "./Connection.state.svelte";
+import type { MessageDTO } from "$lib/types/dtos";
+import { Attacker } from "./Attacker.state.svelte";
+import { Defender } from "./Defender.state.svelte";
+
+class GameState {
+    messages = $state<MessageDTO[]>([]);
+    async sendMessage(message: string) {
+        const ok = await connectionState.sendMessage(message);
+        if (!ok) return false;
+        return true;
     }
-    set gameId(value: number) {
-        if (this._gameId)return;
-        this._gameId = value;
+    onReceiveMessage(message: MessageDTO) {
+        this.messages = [...this.messages, message];
     }
-    turnCount = 0;
+    attacker = $state<Attacker>(new Attacker());
+    defender = $state<Defender>(new Defender());
+
+
 }
 export const gameState = new GameState();

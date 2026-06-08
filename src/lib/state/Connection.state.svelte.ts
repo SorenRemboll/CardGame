@@ -1,16 +1,19 @@
 import { goto } from "$app/navigation";
 import { ROUTES } from "$lib/consts/routes";
 import { createWSClient } from "$lib/shared/ws-client";
+import { gameState } from "./Game.state.svelte";
 import { user } from "./User.state.svelte";
 
 class ConnectionState {
     client = createWSClient('ws://localhost:8888/ws');
     isConnected = $state(false);
 
+    /** Session ID lives only here; fetched from API when needed. */
+    private _sessionId = '';
+
     async connect() {
         if (this.isConnected) return;
 
-        // Set up handlers before connecting
         this.client.on('connected', () => {
             console.log('WebSocket connected');
         });
@@ -23,8 +26,6 @@ class ConnectionState {
         this.client.on('match_found', (msg) => {
             console.log('Match found!', msg);
             user.gameState = 'IN_BATTLE';
-            user.currentGameId = msg.gameId;
-            user.opponentName = msg.opponentName;
             goto(ROUTES.GAME);
         });
 
@@ -32,22 +33,52 @@ class ConnectionState {
             console.error('Server error:', msg.message);
         });
 
-        await this.client.connect();
+        this.client.on('message_received', (msg) => {
+            console.log('Message received:', msg.message);
+            console.log(msg.message);
+
+            gameState.onReceiveMessage(msg.message);
+        });
+
+        const sessionId = await this.ensureSessionId();
+        if (!sessionId) return;
+        await this.client.connect(sessionId);
         this.isConnected = true;
     }
 
     disconnect() {
         this.client.disconnect();
         this.isConnected = false;
+        this._sessionId = '';
     }
 
-    findGame(sessionId: string, deckId?: number) {
-        this.client.send({ type: 'find_game', sessionId, deckId: deckId ?? 0 });
+    /** Fetches sessionId from API (cookie) and caches it. Returns null if not authenticated. */
+    private async ensureSessionId(): Promise<string | null> {
+        if (this._sessionId) return this._sessionId;
+        const res = await fetch('/api/session');
+
+        if (!res.ok) return null;
+        const data = await res.json() as { sessionId: string | null };
+        if (data.sessionId) this._sessionId = data.sessionId;
+        return data.sessionId;
     }
 
-    cancelSearch(sessionId: string) {
-        this.client.send({ type: 'cancel_search', sessionId });
+    async findGame(deckId?: number): Promise<boolean> {
+        if (!this.isConnected) return false;
+        this.client.send({ type: 'find_game', deckId: deckId ?? 0 });
+        return true;
+    }
+
+    async cancelSearch(): Promise<boolean> {
+        if (!this.isConnected) return false;
+        this.client.send({ type: 'cancel_search' });
+        return true;
+    }
+
+    async sendMessage(message: string): Promise<boolean> {
+        if (!this.isConnected) return false;
+        this.client.send({ type: 'send_message', message });
+        return true;
     }
 }
-
 export const connectionState = new ConnectionState();

@@ -12,6 +12,9 @@ export const handle: Handle = async ({ event, resolve, }) => {
     if (PROTECTED_ROUTES.some(route => event.url.pathname.startsWith(route)) && !sessionId) {
         return redirect(307, ROUTES.LOGIN);
     }
+    if (!sessionId) {
+        return resolve(event);
+    }
     const user = await prisma.user.findUnique({
         where: { sessionID: sessionId },
         select: {
@@ -27,7 +30,7 @@ export const handle: Handle = async ({ event, resolve, }) => {
             const currentGame = await prisma.game.findFirst({
                 where: {
                     status: 'IN_PROGRESS',
-                    OR: [{ player1Id: user.id }, { player2Id: user.id }],
+                    OR: [{ attackerId: user.id }, { defenderId: user.id }],
                 },
                 select: { id: true },
                 orderBy: { time_created: 'desc' },

@@ -1,6 +1,5 @@
-import { COOKIE_NAME } from '$env/static/private';
 import { prisma } from '$lib/prisma';
-import type { CardDTO } from '$lib/types';
+import type { CardDTO } from '$lib/types/dtos';
 import type { CardType } from '@prisma-app/client';
 import type { LayoutServerLoad } from './$types';
 
@@ -30,13 +29,12 @@ function toCardDTO(
 	};
 }
 
-export const load: LayoutServerLoad = async ({ locals, cookies }) => {
+export const load: LayoutServerLoad = async ({ locals }) => {
 	if (!locals.user) {
 		return {
 			user: locals.user,
 		};
 	}
-	const sessionId = cookies.get(COOKIE_NAME) ?? null;
 
 	const decks = await prisma.deck.findMany({
 		where: {
@@ -54,7 +52,6 @@ export const load: LayoutServerLoad = async ({ locals, cookies }) => {
 		return {
 			decks: [],
 			user: locals.user,
-			sessionId
 		};
 	}
 	const formattedDecks = decks.map((deck) => ({
@@ -66,6 +63,5 @@ export const load: LayoutServerLoad = async ({ locals, cookies }) => {
 	return {
 		decks: formattedDecks,
 		user: locals.user,
-		sessionId
 	};
 };

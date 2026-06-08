@@ -10,7 +10,7 @@
     import { Card } from "$lib/data/cards/Card.data.svelte";
     import { onMount, untrack } from "svelte";
     import Button from "$lib/components/UI/Button.svelte";
-	import type { CardType } from '@prisma-app/client';
+    import type { CardType } from "@prisma-app/client";
 
     const { data } = $props();
     const initialDeckData = untrack(() => data.deck);
@@ -32,7 +32,6 @@
 
     onMount(async () => {
         availableCards = await getCards();
-        console.log("availableCards", availableCards);
     });
 
     let filteredCards = $derived(
@@ -144,7 +143,8 @@
                         for="deck-description"
                         class="block text-sm font-medium text-gray-300 mb-2"
                     >
-                        Description <span class="text-gray-500">(optional)</span>
+                        Description <span class="text-gray-500">(optional)</span
+                        >
                     </label>
                     <input
                         id="deck-description"

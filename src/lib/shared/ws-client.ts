@@ -4,7 +4,7 @@ type MessageHandler<T extends ServerMessage['type']> = (
     message: Extract<ServerMessage, { type: T }>
 ) => void;
 
-export function createWSClient(url: string) {
+export function createWSClient(baseUrl: string) {
     let ws: WebSocket | null = null;
     const handlers = new Map<string, Set<MessageHandler<any>>>();
 
@@ -13,7 +13,8 @@ export function createWSClient(url: string) {
             return ws?.readyState === WebSocket.OPEN;
         },
 
-        connect() {
+        connect(sessionId: string) {
+            const url = `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}sessionId=${encodeURIComponent(sessionId)}`;
             ws = new WebSocket(url);
 
             ws.onmessage = (event) => {
@@ -39,6 +40,8 @@ export function createWSClient(url: string) {
 
         send(message: ClientMessage) {
             if (ws?.readyState === WebSocket.OPEN) {
+                console.log(message);
+                
                 ws.send(JSON.stringify(message));
             }
         },

@@ -8,6 +8,7 @@ import { ROUTES } from '$lib/consts/routes';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (locals.user) {
+        console.log(locals.user);
         return redirect(307, ROUTES.CHARACTER);
     }
 }
@@ -41,6 +42,7 @@ export const actions = {
             id: user.id,
             userName: user.userName,
             gameState: user.GameState,
+            gameId: null,
         };
         cookies.set(COOKIE_NAME, user.sessionID, { path: '/', })
         return {

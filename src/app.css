@@ -14,11 +14,11 @@
     --color-primary-700: #047857;
     --color-primary-800: #065f46;
     --color-primary-900: #064e3b;
-    
+
     /* Neon Accent */
     --color-neon: #00ffcc;
     --color-neon-glow: #00ffcc80;
-    
+
     /* Teal Accent */
     --color-teal-50: #f0fdfa;
     --color-teal-100: #ccfbf1;
@@ -30,7 +30,7 @@
     --color-teal-700: #0f766e;
     --color-teal-800: #115e59;
     --color-teal-900: #134e4a;
-    
+
     /* Gray Scale */
     --color-gray-50: #f9fafb;
     --color-gray-100: #f3f4f6;
@@ -42,17 +42,19 @@
     --color-gray-700: #374151;
     --color-gray-800: #1f2937;
     --color-gray-900: #111827;
-    
+
+    --color-main-white: #f9fafb;
+
     /* Dark Theme */
     --color-dark-bg: #0a0e1a;
     --color-dark-surface: #131824;
     --color-dark-elevated: #1a2033;
-    
+
     /* Enemy/Danger */
     --color-enemy: #ef4444;
     --color-danger-500: #ef4444;
     --color-danger-600: #dc2626;
-    
+
     /* Card Dimensions */
     --spacing-card-width: 180px;
     --spacing-card-height: 300px;
@@ -62,25 +64,25 @@
     * {
         user-select: none;
     }
-    
+
     body {
         @apply bg-dark-bg text-gray-100;
     }
-    
+
     /* Custom scrollbar */
     ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
     }
-    
+
     ::-webkit-scrollbar-track {
         @apply bg-dark-surface;
     }
-    
+
     ::-webkit-scrollbar-thumb {
         @apply bg-gray-700 rounded-full;
     }
-    
+
     ::-webkit-scrollbar-thumb:hover {
         @apply bg-gray-600;
     }

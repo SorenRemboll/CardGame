@@ -7,36 +7,26 @@ import { cancelSearch } from "$lib/remote/user.remote";
 class User {
     private _id: number = $state(0);
     private _isAuthenticated: boolean = $state(false);
-    private _sessionId: string = $state("");
 
     public userName: string = $state("");
     gameState: GameState = $state("IDLE");
-    currentGameId: string | null = $state(null);
-    opponentName: string | null = $state(null);
 
     async searchGame(deckId: number) {
-        if (!this._sessionId) {
-            console.error("No session ID");
+        if (!this._isAuthenticated) {
+            console.error("Not authenticated");
             return;
         }
-
-        // Connect to WebSocket and find a game
         await connectionState.connect();
-        connectionState.findGame(this._sessionId, deckId);
-
-        // Navigate to loading screen (will be redirected when match found)
+        const ok = await connectionState.findGame(deckId);
+        if (!ok) return;
         goto(ROUTES.LOADING);
     }
 
     async cancelSearch() {
-        if (this._sessionId) {
-            connectionState.cancelSearch(this._sessionId);
-        }
-
-        // Update server state via remote function
+        const ok = await connectionState.cancelSearch();
+        if (!ok) return;
         this.gameState = "IDLE";
         await cancelSearch();
-
         connectionState.disconnect();
         goto(ROUTES.HOME);
     }
@@ -49,14 +39,6 @@ class User {
         this._id = value;
     }
 
-    get sessionId() {
-        return this._sessionId;
-    }
-    set sessionId(value: string) {
-        if (this._sessionId) return;
-        this._sessionId = value;
-    }
-
     get isAuthenticated() {
         return this._isAuthenticated;
     }
@@ -67,12 +49,10 @@ class User {
 
     async logout() {
         if (!this._isAuthenticated) return;
-
         await fetch('/apis/auth', { method: 'POST' });
-
+        connectionState.disconnect();
         this._id = 0;
         this._isAuthenticated = false;
-        this._sessionId = "";
         this.userName = "";
         goto(ROUTES.LOGIN);
     }

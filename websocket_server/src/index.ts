@@ -3,11 +3,12 @@ import { prisma } from './prisma';
 
 // Map sessionId -> WebSocket for active connections that are searching
 // DB is source of truth for GameState (SEARCHING); map only for sending messages
-const searchingSockets = new Map<string, ServerWebSocket<unknown>>();
+type WSData = { sessionId: string | null };
+const searchingSockets = new Map<string, ServerWebSocket<WSData>>();
 // Map sessionId -> deckId selected when queuing (so we can store it on the Game when matched)
 const searchingDeckIds = new Map<string, number>();
 
-const server = Bun.serve({
+const server = Bun.serve<WSData>({
     port: 8888,
 
     async fetch(req, server) {
@@ -23,7 +24,8 @@ const server = Bun.serve({
         }
 
         if (url.pathname === '/ws') {
-            const upgraded = server.upgrade(req);
+            const sessionId = url.searchParams.get('sessionId') ?? null;
+            const upgraded = server.upgrade(req, { data: { sessionId } });
             if (upgraded) return undefined;
             return new Response('WebSocket upgrade failed', { status: 400 });
         }
@@ -32,22 +34,46 @@ const server = Bun.serve({
     },
 
     websocket: {
-        open(ws) {
-            console.log('Client connected');
-            ws.send(JSON.stringify({ type: 'connected' }));
+        data: {} as WSData,
+        async open(ws) {
+            const sessionId = ws.data.sessionId;
+            if (!sessionId) {
+                ws.send(JSON.stringify({ type: 'error', message: 'Missing session' }));
+                ws.close();
+                return;
+            }
+            const user = await prisma.user.findUnique({
+                where: { sessionID: sessionId },
+                select: { id: true, userName: true, currentGameId: true }
+            });
+            if (!user) {
+                ws.send(JSON.stringify({ type: 'error', message: 'Invalid session' }));
+                ws.close();
+                return;
+            }
+            if (user.currentGameId) {
+                await handleConnect(ws, sessionId);
+            } else {
+                ws.send(JSON.stringify({ type: 'connected' }));
+            }
         },
 
         async message(ws, message) {
             const data = JSON.parse(message.toString());
-            console.log('Received:', data.type);
+            const sessionId = ws.data.sessionId;
 
-            if (data.type === 'find_game' && data.sessionId && data.deckId) {
-                await handleFindGame(ws, data.sessionId, data.deckId);
+            if (data.type === 'find_game' && typeof data.deckId === 'number' && sessionId) {
+                await handleFindGame(ws, sessionId, data.deckId);
                 return;
             }
 
-            if (data.type === 'cancel_search' && data.sessionId) {
-                await handleCancelSearch(data.sessionId);
+            if (data.type === 'send_message' && data.message && sessionId) {
+                await handleSendMessage(ws, sessionId, data.message);
+                return;
+            }
+
+            if (data.type === 'cancel_search' && sessionId) {
+                await handleCancelSearch(sessionId);
                 return;
             }
 
@@ -81,8 +107,31 @@ async function clearSearchingState(sessionId: string) {
     }
 }
 
-async function handleFindGame(ws: ServerWebSocket<unknown>, sessionId: string, deckId: number) {
-    console.log('handleFindGame', sessionId);
+async function handleConnect(ws: ServerWebSocket<WSData>, sessionId: string) {
+    const user = await prisma.user.findUnique({
+        where: { sessionID: sessionId },
+        select: { id: true, userName: true, currentGameId: true }
+    });
+    if (!user) {
+        ws.send(JSON.stringify({ type: 'error', message: 'Invalid session' }));
+        return;
+    }
+    if (!user.currentGameId) {
+        ws.send(JSON.stringify({ type: 'error', message: 'No game found' }));
+        return;
+    }
+    const gameDeckIds = await prisma.game.findUnique({
+        where: { id: user?.currentGameId },
+        select: { attackerId: true, defenderId: true, attackerDeckId: true, defenderDeckId: true }
+    });
+    const userDeckId = gameDeckIds?.attackerId === user.id ? gameDeckIds?.attackerDeckId : gameDeckIds?.defenderDeckId;
+    searchingSockets.set(sessionId, ws);
+    searchingDeckIds.set(sessionId, userDeckId!);
+    ws.send(JSON.stringify({ type: 'connected', gameId: user.currentGameId }));
+    console.log('user connected', user.userName);
+}
+
+async function handleFindGame(ws: ServerWebSocket<WSData>, sessionId: string, deckId: number) {
     const user = await prisma.user.findUnique({
         where: { sessionID: sessionId },
         select: { id: true, userName: true }
@@ -132,20 +181,20 @@ async function handleFindGame(ws: ServerWebSocket<unknown>, sessionId: string, d
     }
 
     // 5. Create single game record (match + in-match state); set both users to IN_BATTLE
-    const player1DeckId = searchingDeckIds.get(opponent.sessionID) ?? null;
-    const player2DeckId = deckId || null;
+    const attackerDeckId = searchingDeckIds.get(opponent.sessionID) ?? null;
+    const defenderDeckId = deckId || null;
     const game = await prisma.game.create({
         data: {
-            player1Id: opponent.id,
-            player2Id: user.id,
-            player1DeckId: player1DeckId,
-            player2DeckId: player2DeckId,
+            attackerId: opponent.id,
+            defenderId: user.id,
+            attackerDeckId,
+            defenderDeckId,
             status: 'IN_PROGRESS',
             currentTurn: 1,
-            player1Health: 20,
-            player2Health: 20,
-            player1MaxHealth: 20,
-            player2MaxHealth: 20,
+            attackerHealth: 20,
+            defenderHealth: 20,
+            attackerMaxHealth: 20,
+            defenderMaxHealth: 20,
         }
     });
 
@@ -175,6 +224,48 @@ async function handleCancelSearch(sessionId: string) {
     searchingDeckIds.delete(sessionId);
     await clearSearchingState(sessionId);
     console.log('Search cancelled');
+}
+
+async function handleSendMessage(ws: ServerWebSocket<WSData>, sessionId: string, message: string) {
+    const user = await prisma.user.findUnique({
+        where: { sessionID: sessionId },
+        select: { id: true, userName: true, currentGameId: true }
+    });
+    if (!user) {
+        ws.send(JSON.stringify({ type: 'error', message: 'Invalid session' }));
+        return;
+    }
+    if (!user.currentGameId) {
+        ws.send(JSON.stringify({ type: 'error', message: 'No game found' }));
+        return;
+    }
+    const opponent = await prisma.user.findFirst({
+        where: {
+            currentGameId: user.currentGameId,
+            id: { not: user.id }
+        },
+        select: { id: true, userName: true, sessionID: true, currentGameId: true }
+    });
+
+    if (!opponent) {
+        ws.send(JSON.stringify({ type: 'error', message: 'Opponent not found' }));
+        return;
+    }
+    const opponentWs = searchingSockets.get(opponent.sessionID);
+    if (!opponentWs || opponentWs.readyState !== 1) {
+        ws.send(JSON.stringify({ type: 'error', message: 'Opponent not found' }));
+        return;
+    }
+    const addedMessage = await prisma.message.create({
+        data: {
+            userName: user.userName,
+            content: message,
+            gameId: user.currentGameId,
+            userId: user.id
+        },
+        select: { id: true, content: true, userName: true, userId: true, time_created: true }
+    });
+    opponentWs.send(JSON.stringify({ type: 'message_received', message: addedMessage }));
 }
 
 console.log(`WebSocket server running on ws://localhost:${server.port}/ws`);

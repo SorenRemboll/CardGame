@@ -3,12 +3,12 @@ export const ROUTES = {
     LOGIN: '/login',
     SIGNUP: '/signup',
     GAME: '/game',
-    CHARACTER:' /character',
+    CHARACTER: ' /character',
     CHARACTER_OVERVIEW: '/character/overview',
     CHARACTER_DECKS: '/character/decks',
     CHARACTER_BATTLES: '/battles',
     LOADING: '/loading',
-    CHARACTER_DECK:(deck_id: number | 'new-deck'): `/character/decks/${number | 'new-deck'}` => `/character/decks/${deck_id}`,
+    CHARACTER_DECK: (deck_id: number | 'new-deck'): `/character/decks/${number | 'new-deck'}` => `/character/decks/${deck_id}`,
 } as const
 export const PROTECTED_ROUTES = [
     ROUTES.GAME,
@@ -16,10 +16,12 @@ export const PROTECTED_ROUTES = [
     ROUTES.CHARACTER_OVERVIEW,
     ROUTES.CHARACTER_DECKS,
     ROUTES.CHARACTER_BATTLES,
-    ROUTES.LOADING, 
+    ROUTES.LOADING,
+    ROUTES.LOADING,
+    ROUTES.GAME,
 ] as const;
 export const BATTLE_ROUTES = [
     ROUTES.LOADING,
     ROUTES.GAME,
-    
+
 ]

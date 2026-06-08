@@ -1,3 +1,4 @@
+import type { Message } from '@DBG';
 import type { CardType } from '@prisma-app/client';
 
 /** Card in deck context: Prisma CardData shape + quantity */
@@ -36,3 +37,5 @@ export type UserDTO = {
 	userName: string;
 	gameState: import('@prisma-app/client').GameState;
 };
+
+export type MessageDTO = Pick<Message, "id" | "content" | "userName" | "userId" | "time_created">;

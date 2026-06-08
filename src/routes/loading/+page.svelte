@@ -1,6 +1,5 @@
 <script lang="ts">
     import { user } from "$lib/state/User.state.svelte";
-    import { connectionState } from "$lib/state/Connection.state.svelte";
     import Button from "$lib/components/UI/Button.svelte";
     import { onMount } from "svelte";
 
@@ -8,13 +7,6 @@
     let dots = $state("");
 
     onMount(() => {
-        // Reconnect and re-enter queue after refresh (user stays SEARCHING in DB)
-        if (user.sessionId) {
-            connectionState.connect().then(() => {
-                connectionState.findGame(user.sessionId);
-            });
-        }
-
         const timer = setInterval(() => {
             searchTime++;
         }, 1000);
