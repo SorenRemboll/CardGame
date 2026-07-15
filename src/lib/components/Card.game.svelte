@@ -47,6 +47,8 @@
 
 <div
     bind:this={cardElement}
+    role="button"
+    tabindex="0"
     onmousedown={handleMouseDown}
     onmouseup={handleMouseUp}
     style:top={isDragging ? `${actionState.y - 97}px` : ""}

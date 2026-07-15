@@ -1,5 +1,5 @@
 import type { CardType } from '@prisma-app/client';
-import type { CardDTO } from '$lib/types';
+import type { CardDTO } from '$lib/types/dtos';
 
 export type CardInit = {
 	id: number;

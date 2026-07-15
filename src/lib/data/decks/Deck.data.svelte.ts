@@ -1,7 +1,7 @@
 import { goto } from '$app/navigation';
 import { ROUTES } from '$lib/consts/routes';
 import { DECK_SIZE } from '$lib/consts/User.consts';
-import type { CardDTO, DeckDTO } from '$lib/types';
+import type { CardDTO, DeckDTO } from '$lib/types/dtos';
 import { playerState } from '$lib/state/Player.state.svelte';
 import { saveDeck } from '$lib/remote/decks.remote';
 import { Card } from '../cards/Card.data.svelte';

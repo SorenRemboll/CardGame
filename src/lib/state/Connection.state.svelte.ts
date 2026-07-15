@@ -1,4 +1,5 @@
 import { goto } from "$app/navigation";
+import { resolve } from "$app/paths";
 import { ROUTES } from "$lib/consts/routes";
 import { createWSClient } from "$lib/shared/ws-client";
 import { gameState } from "./Game.state.svelte";
@@ -26,7 +27,7 @@ class ConnectionState {
         this.client.on('match_found', (msg) => {
             console.log('Match found!', msg);
             user.gameState = 'IN_BATTLE';
-            goto(ROUTES.GAME);
+            goto(resolve(ROUTES.GAME));
         });
 
         this.client.on('error', (msg) => {

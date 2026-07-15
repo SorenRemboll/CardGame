@@ -8,8 +8,8 @@ const config = {
 	preprocess: vitePreprocess(),
 
 	onwarn: (warning, handler) => {
-		// Disable all a11y warnings
-		if (warning.code.startsWith('a11y-')) return;
+		// Disable all a11y warnings (Svelte 5 uses a11y_*, older used a11y-*)
+		if (warning.code.startsWith('a11y_') || warning.code.startsWith('a11y-')) return;
 		handler(warning);
 	},
 

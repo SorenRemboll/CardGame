@@ -122,7 +122,7 @@
                         id="deck-name"
                         type="text"
                         bind:value={newDeck.name}
-                        oninput={(e) => {
+                        oninput={() => {
                             if (newDeck.name.length >= DECK_NAME_MAX_LENGTH) {
                                 newDeck.name = newDeck.name.slice(
                                     0,
@@ -150,7 +150,7 @@
                         id="deck-description"
                         type="text"
                         bind:value={newDeck.description}
-                        oninput={(e) => {
+                        oninput={() => {
                             if (
                                 newDeck.description.length >=
                                 DECK_DESCRIPTION_MAX_LENGTH
@@ -246,7 +246,7 @@
                         <div
                             class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
                         >
-                            {#each filteredCards as card}
+                            {#each filteredCards as card (card.id)}
                                 <CardDisplay
                                     {card}
                                     amount={formattedNewDeckCards[card.id]
@@ -329,7 +329,7 @@
                         <p class="text-xs mt-1">Click cards to add them</p>
                     </div>
                 {:else}
-                    {#each Object.values(formattedNewDeckCards) as deckEntry}
+                    {#each Object.values(formattedNewDeckCards) as deckEntry (deckEntry.card.id)}
                         <div
                             class="border-b border-gray-700 p-3 hover:bg-dark-elevated transition-colors group"
                         >

@@ -8,13 +8,11 @@
     "types": [
       "bun"
     ],
-    "baseUrl": ".",
     "paths": {
       "$shared/*": [
         "../src/lib/shared/*"
       ]
     },
-    "outDir": "./dist"
   },
   "exclude": [
     "node_modules"

@@ -5,6 +5,7 @@
     import Panel from "$lib/components/UI/Panel.svelte";
     import DeckCard from "$lib/components/UI/DeckCard.svelte";
     import { DECK_SLOTS_CAP_AMOUNT } from "$lib/consts/User.consts";
+  import { resolve } from "$app/paths";
 </script>
 
 <div class="min-h-screen bg-dark-bg p-6">
@@ -22,7 +23,7 @@
                 </div>
 
                 {#if !playerState.isAllDecksSlotsTaken}
-                    <a href={ROUTES.CHARACTER_DECK('new-deck')}>
+                    <a href={resolve(ROUTES.CHARACTER_DECK('new-deck'))}>
                         <Button size="lg">
                             <span class="flex items-center gap-2">
                                 <span class="text-xl">+</span>
@@ -49,19 +50,24 @@
                 <div class="text-6xl mb-4">🎴</div>
                 <h3 class="text-2xl font-bold text-gray-100 mb-2">No Decks Yet</h3>
                 <p class="text-gray-400 mb-6">Create your first deck to start battling!</p>
-                <a href={ROUTES.CHARACTER_DECK('new-deck')}>
+                <a href={resolve(ROUTES.CHARACTER_DECK('new-deck'))}>
                     <Button>Create Your First Deck</Button>
                 </a>
             </Panel>
         {:else}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {#each playerState.decks as deck}
-                    <DeckCard deck={deck} href={ROUTES.CHARACTER_DECK(deck.id)} actionLabel="Edit Deck →" />
+                {#each playerState.decks as deck (deck.id)}
+                    <DeckCard
+						deck={deck}
+						href={ROUTES.CHARACTER_DECK(deck.id)}
+						actionLabel="Edit Deck →"
+						canTest
+					/>
                 {/each}
 
                 <!-- Create New Deck Card (if slots available) -->
                 {#if !playerState.isAllDecksSlotsTaken}
-                    <a href={ROUTES.CHARACTER_DECK('new-deck')} class="block group">
+                    <a href={resolve(ROUTES.CHARACTER_DECK('new-deck'))} class="block group">
                         <Panel variant="elevated" class="h-full border-dashed hover:border-primary-500 hover:bg-primary-500/5 transition-all duration-300">
                             <div class="flex flex-col items-center justify-center h-full text-center py-8">
                                 <div class="w-16 h-16 bg-primary-600/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">

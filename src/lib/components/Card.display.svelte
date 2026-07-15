@@ -15,9 +15,17 @@
             ? "opacity-50 cursor-not-allowed grayscale-50"
             : "opacity-100 cursor-pointer",
     );
+
+    const handleKeydown = (e: KeyboardEvent) => {
+        if (!onclick) return;
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onclick();
+        }
+    };
 </script>
 
-<div {onclick} class="w-fit relative" role="button" tabindex="0">
+<div {onclick} onkeydown={handleKeydown} class="w-fit relative" role="button" tabindex="0">
     <div class="{disableClass} relative">
         <Card {card} {isEnemy} variant="hover" />
     </div>
